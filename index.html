@@ -855,6 +855,167 @@
     padding:5px 12px;
   }
 
+  /* Profile / auth */
+  .profile-fab{
+    position:fixed;
+    top:14px; right:14px;
+    width:44px; height:44px;
+    border-radius:50%;
+    border:1px solid var(--card-border);
+    background:var(--card);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.2rem;
+    cursor:pointer;
+    z-index:90;
+    box-shadow:0 10px 26px rgba(0,0,0,0.35);
+    overflow:hidden;
+    padding:0;
+    color:var(--ink);
+  }
+  .profile-fab:hover{transform:translateY(-1px);}
+  .profile-fab-avatar{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+
+  .auth-overlay{
+    position:fixed; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    padding:20px;
+    background:rgba(8,6,20,0.78);
+    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity 0.3s ease, visibility 0.3s ease;
+    z-index:130;
+  }
+  .auth-overlay.show{opacity:1; visibility:visible; pointer-events:auto;}
+
+  .auth-card{
+    width:100%; max-width:380px;
+    max-height:88vh;
+    overflow-y:auto;
+    display:flex; flex-direction:column; gap:14px;
+    background:linear-gradient(160deg, rgba(26,20,64,0.97), rgba(43,16,85,0.97));
+    border:1px solid var(--card-border);
+    border-radius:var(--radius);
+    padding:22px;
+    backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+    box-shadow:0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+  }
+
+  .auth-title{font-size:1.15rem;font-weight:800;text-align:center;}
+  .auth-sub{font-size:0.82rem;color:var(--ink-dim);text-align:center;line-height:1.4;}
+
+  .field-group{display:flex;flex-direction:column;gap:4px;width:100%;}
+  .field-label{font-size:0.74rem;color:var(--ink-dim);letter-spacing:0.02em;}
+  .field-input{
+    width:100%;
+    padding:12px 14px;
+    border-radius:12px;
+    border:1px solid var(--card-border);
+    background:rgba(255,255,255,0.05);
+    color:var(--ink);
+    font-size:0.92rem;
+    outline:none;
+    font-family:inherit;
+  }
+  .field-input:focus{border-color:var(--accent);}
+  .field-input.name-input{text-align:left;text-transform:none;letter-spacing:normal;}
+
+  .auth-form{display:flex;flex-direction:column;gap:12px;}
+  .auth-links{display:flex;flex-direction:column;gap:6px;align-items:center;margin-top:2px;}
+  .auth-link{
+    background:none;border:none;color:var(--accent);
+    font-size:0.8rem;cursor:pointer;padding:2px 4px;
+  }
+  .auth-link:hover{text-decoration:underline;}
+  .auth-close{
+    align-self:flex-end;
+    background:none;border:none;color:var(--ink-dim);
+    font-size:1.1rem;cursor:pointer;padding:0 0 4px;
+    margin:-8px -4px -8px 0;
+  }
+  .auth-close:hover{color:var(--ink);}
+
+  /* Profile panel */
+  .profile-header{display:flex;flex-direction:column;align-items:center;gap:8px;}
+  .profile-avatar-wrap{position:relative;width:88px;height:88px;}
+  .profile-avatar{
+    width:88px;height:88px;border-radius:50%;object-fit:cover;
+    background:linear-gradient(135deg, var(--x-color), var(--o-color));
+    display:flex;align-items:center;justify-content:center;
+    font-size:2rem;font-weight:800;color:#fff;
+    border:2px solid var(--card-border);
+    position:absolute; top:0; left:0;
+  }
+  .profile-avatar-edit{
+    position:absolute; bottom:-2px; right:-2px;
+    width:30px;height:30px;border-radius:50%;
+    background:var(--accent); color:#04231c;
+    border:2px solid var(--bg-2);
+    display:flex;align-items:center;justify-content:center;
+    font-size:0.85rem; cursor:pointer;
+  }
+  .profile-name-row{display:flex;align-items:center;gap:8px;margin-top:2px;}
+  .profile-name{font-size:1.1rem;font-weight:800;}
+  .profile-name-edit-btn{background:none;border:none;color:var(--ink-dim);cursor:pointer;font-size:0.85rem;}
+  .profile-email{font-size:0.75rem;color:var(--ink-dim);}
+
+  .profile-section-title{
+    font-size:0.78rem;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;
+    color:var(--ink-dim); margin-top:4px;
+  }
+
+  .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .stat-tile{
+    background:rgba(255,255,255,0.05);
+    border:1px solid var(--card-border);
+    border-radius:14px;
+    padding:10px 6px;
+    text-align:center;
+  }
+  .stat-tile .stat-value{font-size:1.15rem;font-weight:800;}
+  .stat-tile .stat-label{font-size:0.65rem;color:var(--ink-dim);margin-top:2px;}
+
+  .wld-row{display:flex;gap:8px;}
+  .wld-tile{flex:1;}
+  .wld-tile.win .stat-value{color:var(--accent);}
+  .wld-tile.loss .stat-value{color:var(--o-glow);}
+  .wld-tile.draw .stat-value{color:var(--win);}
+
+  .history-list{display:flex;flex-direction:column;gap:8px;max-height:180px;overflow-y:auto;}
+  .history-item{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:8px;
+    background:rgba(255,255,255,0.04);
+    border:1px solid var(--card-border);
+    border-radius:12px;
+    padding:9px 12px;
+    font-size:0.8rem;
+  }
+  .history-players{color:var(--ink);}
+  .history-result{font-weight:800;font-size:0.72rem;padding:3px 9px;border-radius:999px;white-space:nowrap;}
+  .history-result.win{color:var(--accent);background:rgba(66,232,196,0.12);}
+  .history-result.loss{color:var(--o-glow);background:rgba(255,92,154,0.12);}
+  .history-result.draw{color:var(--win);background:rgba(255,209,102,0.12);}
+  .history-empty{font-size:0.8rem;color:var(--ink-dim);text-align:center;padding:10px 0;}
+
+  /* Avatar cropper */
+  .crop-viewport{
+    position:relative;
+    width:240px;height:240px;
+    margin:0 auto;
+    border-radius:50%;
+    overflow:hidden;
+    background:rgba(0,0,0,0.3);
+    border:2px solid var(--card-border);
+    touch-action:none;
+    cursor:grab;
+  }
+  .crop-viewport:active{cursor:grabbing;}
+  .crop-viewport img{position:absolute; left:0; top:0; user-select:none; -webkit-user-drag:none; pointer-events:none;}
+  .crop-zoom-row{display:flex;align-items:center;gap:10px;width:100%;}
+  .crop-zoom-row input[type="range"]{flex:1;accent-color:var(--accent);}
+
   @media (max-width:420px){
     .stage{gap:12px;}
     .card{padding:14px; gap:12px;}
@@ -868,6 +1029,8 @@
     .start-screen{gap:16px;}
     .start-option{padding:16px 14px;}
     .start-diff-btn{padding:13px 14px;}
+    .auth-card{padding:16px;}
+    .crop-viewport{width:200px;height:200px;}
   }
 
   @media (max-height:700px){
@@ -889,6 +1052,11 @@
 </style>
 </head>
 <body>
+
+<button class="profile-fab" id="profileFab" onclick="openAuthPanel()" title="Mi perfil">
+  <img id="profileFabAvatar" class="profile-fab-avatar" style="display:none;" alt="">
+  <span id="profileFabIcon">👤</span>
+</button>
 
 <div class="start-screen" id="startScreen">
   <div class="start-title">
@@ -941,6 +1109,10 @@
   <div class="online-lobby" id="onlineLobby" style="display:none;">
     <div class="lobby-choice" id="lobbyChoice">
       <div class="lobby-text">Jugá con alguien a distancia usando un código de sala.</div>
+      <div class="field-group" id="lobbyNameGroupCreate">
+        <span class="field-label">Tu nombre (para el historial)</span>
+        <input class="field-input name-input" id="lobbyNameCreate" type="text" placeholder="Jugador" maxlength="24" autocomplete="off">
+      </div>
       <div class="lobby-actions">
         <button class="btn btn-primary" onclick="handleCreateRoomClick()">Crear sala</button>
         <button class="btn btn-ghost" onclick="showLobbyJoinForm()">Unirse a sala</button>
@@ -951,6 +1123,10 @@
     <div class="lobby-join-form" id="lobbyJoinForm" style="display:none;">
       <div class="lobby-text">Ingresá el código de la sala</div>
       <input class="code-input" id="joinCodeInput" type="text" placeholder="ABC-DEF-GHJ" maxlength="11" autocomplete="off" autocapitalize="characters" spellcheck="false">
+      <div class="field-group" id="lobbyNameGroupJoin">
+        <span class="field-label">Tu nombre (para el historial)</span>
+        <input class="field-input name-input" id="lobbyNameJoin" type="text" placeholder="Jugador" maxlength="24" autocomplete="off">
+      </div>
       <div class="lobby-actions">
         <button class="btn btn-primary" onclick="handleJoinRoomClick()">Unirse</button>
       </div>
@@ -1055,6 +1231,145 @@
   </div>
 </div>
 
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-card">
+    <button class="auth-close" onclick="closeAuthPanel()" title="Cerrar">✕</button>
+
+    <div class="auth-form" id="authLoginForm" style="display:none;">
+      <div class="auth-title">Iniciar sesión</div>
+      <div class="field-group">
+        <span class="field-label">Email</span>
+        <input class="field-input" id="loginEmail" type="email" autocomplete="email" placeholder="vos@mail.com">
+      </div>
+      <div class="field-group">
+        <span class="field-label">Contraseña</span>
+        <input class="field-input" id="loginPassword" type="password" autocomplete="current-password" placeholder="••••••••">
+      </div>
+      <button class="btn btn-primary" onclick="handleLoginSubmit()">Iniciar sesión</button>
+      <div class="auth-links">
+        <button class="auth-link" onclick="showAuthForgot()">¿Olvidaste tu contraseña?</button>
+        <button class="auth-link" onclick="showAuthRegister()">¿No tenés cuenta? Registrate</button>
+      </div>
+    </div>
+
+    <div class="auth-form" id="authRegisterForm" style="display:none;">
+      <div class="auth-title">Crear cuenta</div>
+      <div class="field-group">
+        <span class="field-label">Nombre</span>
+        <input class="field-input" id="registerName" type="text" autocomplete="nickname" placeholder="¿Cómo te decimos?" maxlength="24">
+      </div>
+      <div class="field-group">
+        <span class="field-label">Email</span>
+        <input class="field-input" id="registerEmail" type="email" autocomplete="email" placeholder="vos@mail.com">
+      </div>
+      <div class="field-group">
+        <span class="field-label">Contraseña</span>
+        <input class="field-input" id="registerPassword" type="password" autocomplete="new-password" placeholder="Mínimo 6 caracteres">
+      </div>
+      <div class="field-group">
+        <span class="field-label">Repetir contraseña</span>
+        <input class="field-input" id="registerPassword2" type="password" autocomplete="new-password" placeholder="••••••••">
+      </div>
+      <button class="btn btn-primary" onclick="handleRegisterSubmit()">Registrarme</button>
+      <div class="auth-links">
+        <button class="auth-link" onclick="showAuthLogin()">¿Ya tenés cuenta? Iniciá sesión</button>
+      </div>
+    </div>
+
+    <div class="auth-form" id="authForgotForm" style="display:none;">
+      <div class="auth-title">Recuperar contraseña</div>
+      <div class="auth-sub">Te mandamos un link por mail para elegir una contraseña nueva.</div>
+      <div class="field-group">
+        <span class="field-label">Email</span>
+        <input class="field-input" id="forgotEmail" type="email" autocomplete="email" placeholder="vos@mail.com">
+      </div>
+      <button class="btn btn-primary" onclick="handleForgotSubmit()">Enviar link de recuperación</button>
+      <div class="auth-links">
+        <button class="auth-link" onclick="showAuthLogin()">← Volver a iniciar sesión</button>
+      </div>
+    </div>
+
+    <div class="auth-form" id="authResetForm" style="display:none;">
+      <div class="auth-title">Elegí tu nueva contraseña</div>
+      <div class="field-group">
+        <span class="field-label">Contraseña nueva</span>
+        <input class="field-input" id="resetPassword" type="password" autocomplete="new-password" placeholder="Mínimo 6 caracteres">
+      </div>
+      <div class="field-group">
+        <span class="field-label">Repetir contraseña</span>
+        <input class="field-input" id="resetPassword2" type="password" autocomplete="new-password" placeholder="••••••••">
+      </div>
+      <button class="btn btn-primary" onclick="handleResetSubmit()">Guardar nueva contraseña</button>
+    </div>
+
+    <div class="auth-form" id="authCheckEmail" style="display:none;">
+      <div class="auth-title">📩 Revisá tu email</div>
+      <div class="auth-sub" id="authCheckEmailText"></div>
+      <button class="btn btn-ghost" onclick="showAuthLogin()">← Volver a iniciar sesión</button>
+    </div>
+
+    <div class="lobby-spinner" id="authSpinner" style="display:none;">
+      <div class="lobby-spinner-dot"></div>
+      <div class="lobby-text" id="authSpinnerText">Conectando…</div>
+    </div>
+
+    <div class="lobby-error" id="authError" style="display:none;">
+      <div class="lobby-error-text" id="authErrorText"></div>
+      <button class="btn btn-ghost" onclick="showAuthLogin()">← Volver</button>
+    </div>
+
+    <div class="auth-form" id="profilePanel" style="display:none;">
+      <div class="profile-header">
+        <div class="profile-avatar-wrap">
+          <img class="profile-avatar" id="profileAvatarImg" style="display:none;" alt="Foto de perfil">
+          <div class="profile-avatar" id="profileAvatarFallback"></div>
+          <button class="profile-avatar-edit" onclick="document.getElementById('avatarFileInput').click()" title="Cambiar foto">✎</button>
+          <input type="file" id="avatarFileInput" accept="image/*" style="display:none;" onchange="handleAvatarFileSelected(event)">
+        </div>
+        <div class="profile-name-row">
+          <span class="profile-name" id="profileNameText"></span>
+          <button class="profile-name-edit-btn" onclick="handleEditDisplayName()" title="Editar nombre">✎</button>
+        </div>
+        <span class="profile-email" id="profileEmailText"></span>
+      </div>
+
+      <div class="profile-section-title">♾️ Mejor puntaje · Modo Infinito</div>
+      <div class="stat-grid">
+        <div class="stat-tile"><div class="stat-value" id="statInfEasy">–</div><div class="stat-label">Fácil</div></div>
+        <div class="stat-tile"><div class="stat-value" id="statInfMedium">–</div><div class="stat-label">Medio</div></div>
+        <div class="stat-tile"><div class="stat-value" id="statInfHard">–</div><div class="stat-label">Difícil</div></div>
+      </div>
+
+      <div class="profile-section-title">🌐 Multijugador Online</div>
+      <div class="wld-row">
+        <div class="stat-tile wld-tile win"><div class="stat-value" id="statWins">0</div><div class="stat-label">Ganadas</div></div>
+        <div class="stat-tile wld-tile loss"><div class="stat-value" id="statLosses">0</div><div class="stat-label">Perdidas</div></div>
+        <div class="stat-tile wld-tile draw"><div class="stat-value" id="statDraws">0</div><div class="stat-label">Empatadas</div></div>
+      </div>
+
+      <div class="profile-section-title">Historial de partidas</div>
+      <div class="history-list" id="historyList"></div>
+
+      <button class="btn btn-ghost" onclick="handleSignOut()" style="margin-top:6px;">Cerrar sesión</button>
+    </div>
+  </div>
+</div>
+
+<div class="auth-overlay" id="cropOverlay">
+  <div class="auth-card" style="max-width:320px; align-items:center;">
+    <button class="auth-close" onclick="cancelAvatarCrop()" title="Cancelar">✕</button>
+    <div class="auth-title">Encuadrá tu foto</div>
+    <div class="crop-viewport" id="cropViewport">
+      <img id="cropImg" alt="">
+    </div>
+    <div class="crop-zoom-row">
+      <span style="font-size:0.8rem;">🔍</span>
+      <input type="range" id="cropZoomSlider" min="1" max="3" step="0.01" value="1" oninput="handleCropZoomInput()">
+    </div>
+    <button class="btn btn-primary" onclick="confirmAvatarCrop()" style="width:100%;">Guardar foto</button>
+  </div>
+</div>
+
 <script>
   const WIN_LINES = [
     [0,1,2],[3,4,5],[6,7,8],
@@ -1095,6 +1410,17 @@
   let onlineChannel = null;
   let supabaseClient = null;
   let supabaseLibPromise = null;
+  let onlineGuestName = null;   // chosen once per session if not logged in
+  let onlineOpponent = { name: null, userId: null }; // learned from the first snapshot the rival pushes
+  let matchResultRecorded = false; // guards against double-recording stats/history for one finished match
+
+  // ---------- profile / auth state ----------
+  let authInitPromise = null;
+  let currentUser = null;      // Supabase auth user object, or null when logged out
+  let currentProfile = null;   // { id, display_name, avatar_url }
+  let profileStatsCache = null; // { infinite: {easy,medium,hard}, wld: {wins,losses,draws}, history: [...] }
+  let pendingAvatarBlob = null;
+  let cropState = null; // { iw, ih, baseScale, scale, offsetX, offsetY, dragging, dragStartX, dragStartY, startOffX, startOffY }
 
   const DIFFICULTY_CONFIG = {
     easy:   { maxDepth: 1, blunderChance: 0.55 },
@@ -1375,6 +1701,8 @@
     captionEl.innerHTML = `Puntaje final: <strong>${infiniteScore}</strong>`;
     overlay.classList.add('show');
     document.getElementById('infiniteActions').style.display = 'flex';
+
+    if(currentUser) recordInfiniteBestScore(difficulty, infiniteScore);
   }
 
   function restartInfiniteRun(){
@@ -1483,7 +1811,22 @@
     document.getElementById('startMenu').style.display = 'none';
     document.getElementById('startDiff').style.display = 'none';
     document.getElementById('onlineLobby').style.display = 'flex';
+    syncOnlineNameFields();
     showLobbyChoice();
+  }
+
+  function syncOnlineNameFields(){
+    const loggedIn = !!currentUser;
+    const groupC = document.getElementById('lobbyNameGroupCreate');
+    const groupJ = document.getElementById('lobbyNameGroupJoin');
+    if(groupC) groupC.style.display = loggedIn ? 'none' : 'flex';
+    if(groupJ) groupJ.style.display = loggedIn ? 'none' : 'flex';
+    if(!loggedIn){
+      const nameC = document.getElementById('lobbyNameCreate');
+      const nameJ = document.getElementById('lobbyNameJoin');
+      if(nameC && !nameC.value) nameC.value = onlineGuestName || '';
+      if(nameJ && !nameJ.value) nameJ.value = onlineGuestName || '';
+    }
   }
 
   function copyRoomCode(){
@@ -1510,6 +1853,7 @@
   }
 
   async function createRoom(){
+    captureOnlineGuestName('lobbyNameCreate');
     showLobbySpinner('Creando sala…');
     try{
       const sb = await ensureSupabase();
@@ -1524,6 +1868,8 @@
       onlineMyMark = 'X';
       onlinePhase = 'waiting';
       onlineMode = true;
+      onlineOpponent = { name: null, userId: null };
+      matchResultRecorded = false;
       subscribeRoom(code);
       showLobbyWaiting(code);
     } catch(err){
@@ -1537,6 +1883,7 @@
       showLobbyError('El código debe tener 9 caracteres (formato ABC-DEF-GHJ).');
       return;
     }
+    captureOnlineGuestName('lobbyNameJoin');
     showLobbySpinner('Buscando la sala…');
     try{
       const sb = await ensureSupabase();
@@ -1561,6 +1908,8 @@
       onlineMyMark = 'O';
       onlinePhase = 'playing';
       onlineMode = true;
+      onlineOpponent = { name: null, userId: null };
+      matchResultRecorded = false;
       showLobbySpinner('Uniéndote a la partida…');
       subscribeRoom(code);
 
@@ -1607,6 +1956,7 @@
   }
 
   function beginOnlineRound(){
+    matchResultRecorded = false;
     initState('X'); // room creator always starts the very first round; no coin flip online
     buildMegaBoard();
     winLineEl.classList.remove('draw-on');
@@ -1620,6 +1970,7 @@
   }
 
   function startNewOnlineRound(){
+    matchResultRecorded = false;
     initState(onlineMyMark); // whoever taps "Nueva Partida" starts this round
     buildMegaBoard();
     winLineEl.classList.remove('draw-on');
@@ -1632,7 +1983,12 @@
   }
 
   function buildStateSnapshot(){
-    return { lastMover: onlineClientId, boards, subWinner, activeBoard, current, gameOver, winner, winLineIdx, scores };
+    return {
+      lastMover: onlineClientId, boards, subWinner, activeBoard, current, gameOver, winner, winLineIdx, scores,
+      moverMark: onlineMyMark,
+      moverName: myDisplayNameForOnline(),
+      moverUserId: currentUser ? currentUser.id : null
+    };
   }
 
   function applyStateSnapshotDirect(state){
@@ -1644,6 +2000,11 @@
     winner = state.winner;
     winLineIdx = state.winLineIdx;
     scores = state.scores || scores;
+
+    if(state.moverName){
+      onlineOpponent = { name: state.moverName, userId: state.moverUserId || null };
+      updateRoomChip();
+    }
 
     buildMegaBoard();
     for(let b=0;b<9;b++){
@@ -1672,6 +2033,10 @@
         const label = winner === onlineMyMark ? '¡Ganaste vos! 🎉' : 'Ganó tu rival';
         statusEl.innerHTML = `<span>${label}</span>`;
         launchConfetti(winner);
+      }
+      if(!matchResultRecorded){
+        matchResultRecorded = true;
+        recordOwnOnlineStat(myOnlineResult(winner));
       }
     } else {
       updateStatus();
@@ -1704,7 +2069,11 @@
     if(!chip) return;
     if(!onlineMode || !onlineRoomCode){ chip.style.display = 'none'; return; }
     chip.style.display = 'flex';
-    chip.textContent = `Sala ${formatRoomCode(onlineRoomCode)} · Sos ${onlineMyMark === 'X' ? '✕' : '○'}`;
+    const me = myDisplayNameForOnline();
+    const mark = onlineMyMark === 'X' ? '✕' : '○';
+    let text = `Sala ${formatRoomCode(onlineRoomCode)} · Sos ${mark} (${me})`;
+    if(onlineOpponent && onlineOpponent.name) text += ` vs ${onlineOpponent.name}`;
+    chip.textContent = text;
   }
 
   function cancelOnlineWaiting(){
@@ -1721,8 +2090,527 @@
     onlineRoomCode = null;
     onlineMyMark = null;
     onlinePhase = null;
+    onlineOpponent = { name: null, userId: null };
+    matchResultRecorded = false;
     updateRoomChip();
   }
+
+  // ---------- online stats & match recording ----------
+
+  function escapeHtml(str){
+    return String(str == null ? '' : str).replace(/[&<>"']/g, c => (
+      { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]
+    ));
+  }
+
+  function captureOnlineGuestName(inputId){
+    if(currentUser) return; // logged-in players always use their profile name
+    const input = document.getElementById(inputId);
+    const val = input ? input.value.trim() : '';
+    onlineGuestName = val.slice(0,24) || ('Jugador' + Math.floor(Math.random()*900+100));
+  }
+
+  function myDisplayNameForOnline(){
+    if(currentProfile && currentProfile.display_name) return currentProfile.display_name;
+    if(currentUser && currentUser.email) return currentUser.email.split('@')[0];
+    return onlineGuestName || 'Jugador';
+  }
+
+  function myOnlineResult(finalWinner){
+    if(finalWinner === 'D') return 'draw';
+    return finalWinner === onlineMyMark ? 'win' : 'loss';
+  }
+
+  async function recordOwnOnlineStat(result){
+    if(!currentUser) return;
+    try{
+      const sb = await ensureSupabase();
+      const { data } = await sb.from('online_stats').select('wins,losses,draws').eq('user_id', currentUser.id).maybeSingle();
+      const cur = data || { wins:0, losses:0, draws:0 };
+      const patch = { user_id: currentUser.id, wins: cur.wins, losses: cur.losses, draws: cur.draws, updated_at: new Date().toISOString() };
+      if(result === 'win') patch.wins++;
+      else if(result === 'loss') patch.losses++;
+      else patch.draws++;
+      await sb.from('online_stats').upsert(patch);
+    } catch(err){ /* stats are best-effort; a failed write here shouldn't interrupt play */ }
+  }
+
+  async function recordMatchHistory(finalWinner){
+    try{
+      const sb = await ensureSupabase();
+      const myName = myDisplayNameForOnline();
+      const rivalName = (onlineOpponent && onlineOpponent.name) || 'Rival';
+      const xName = onlineMyMark === 'X' ? myName : rivalName;
+      const oName = onlineMyMark === 'O' ? myName : rivalName;
+      const xId = onlineMyMark === 'X' ? (currentUser ? currentUser.id : null) : (onlineOpponent ? onlineOpponent.userId : null);
+      const oId = onlineMyMark === 'O' ? (currentUser ? currentUser.id : null) : (onlineOpponent ? onlineOpponent.userId : null);
+      await sb.from('match_history').insert({
+        room_code: onlineRoomCode,
+        player_x_id: xId,
+        player_x_name: xName,
+        player_o_id: oId,
+        player_o_name: oName,
+        winner: finalWinner
+      });
+    } catch(err){ /* best-effort */ }
+  }
+
+  async function recordInfiniteBestScore(diff, score){
+    if(!currentUser) return;
+    try{
+      const sb = await ensureSupabase();
+      const { data } = await sb.from('infinite_best_scores').select('best_score').eq('user_id', currentUser.id).eq('difficulty', diff).maybeSingle();
+      const prevBest = data ? data.best_score : 0;
+      if(score > prevBest){
+        await sb.from('infinite_best_scores').upsert({ user_id: currentUser.id, difficulty: diff, best_score: score, updated_at: new Date().toISOString() });
+      }
+    } catch(err){ /* best-effort */ }
+  }
+
+  // ---------- profile / auth ----------
+
+  function authRedirectUrl(){
+    return window.location.href.split('#')[0].split('?')[0];
+  }
+
+  function ensureAuthInit(){
+    if(authInitPromise) return authInitPromise;
+    authInitPromise = (async () => {
+      try{
+        const sb = await ensureSupabase();
+        sb.auth.onAuthStateChange((event, session) => {
+          if(event === 'PASSWORD_RECOVERY'){
+            if(session) handleSignedIn(session);
+            document.getElementById('authOverlay').classList.add('show');
+            showAuthReset();
+          } else if(event === 'SIGNED_IN' || event === 'INITIAL_SESSION'){
+            if(session) handleSignedIn(session);
+          } else if(event === 'SIGNED_OUT'){
+            handleSignedOut();
+          }
+        });
+        const { data } = await sb.auth.getSession();
+        if(data && data.session) await handleSignedIn(data.session);
+        return sb;
+      } catch(err){
+        authInitPromise = null; // allow retrying later instead of caching a permanent failure
+        throw err;
+      }
+    })();
+    return authInitPromise;
+  }
+
+  async function handleSignedIn(session){
+    currentUser = session.user;
+    updateProfileFab();
+    try{
+      const sb = await ensureSupabase();
+      let { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
+      if(!profile){
+        // safety net in case the on-signup DB trigger hasn't run yet
+        const displayName = (currentUser.user_metadata && currentUser.user_metadata.display_name)
+          || (currentUser.email || 'Jugador').split('@')[0];
+        const { data: created } = await sb.from('profiles').upsert({ id: currentUser.id, display_name: displayName }).select().maybeSingle();
+        profile = created;
+      }
+      currentProfile = profile;
+      updateProfileFab();
+    } catch(err){ /* profile fetch failed; fab still reflects logged-in state */ }
+  }
+
+  function handleSignedOut(){
+    currentUser = null;
+    currentProfile = null;
+    profileStatsCache = null;
+    updateProfileFab();
+  }
+
+  function updateProfileFab(){
+    const img = document.getElementById('profileFabAvatar');
+    const icon = document.getElementById('profileFabIcon');
+    if(!img || !icon) return;
+    if(currentUser && currentProfile && currentProfile.avatar_url){
+      img.src = currentProfile.avatar_url;
+      img.style.display = 'block';
+      icon.style.display = 'none';
+    } else {
+      img.style.display = 'none';
+      icon.style.display = 'block';
+      icon.textContent = (currentUser && currentProfile && currentProfile.display_name)
+        ? currentProfile.display_name.slice(0,1).toUpperCase()
+        : '👤';
+    }
+  }
+
+  // ---- auth panel state machine ----
+
+  function hideAllAuthPanels(){
+    ['authLoginForm','authRegisterForm','authForgotForm','authResetForm','authCheckEmail','authSpinner','authError','profilePanel'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.style.display = 'none';
+    });
+  }
+  function showAuthLogin(){ hideAllAuthPanels(); document.getElementById('authLoginForm').style.display = 'flex'; }
+  function showAuthRegister(){ hideAllAuthPanels(); document.getElementById('authRegisterForm').style.display = 'flex'; }
+  function showAuthForgot(){ hideAllAuthPanels(); document.getElementById('authForgotForm').style.display = 'flex'; }
+  function showAuthReset(){ hideAllAuthPanels(); document.getElementById('authResetForm').style.display = 'flex'; }
+  function showAuthCheckEmail(msg){
+    hideAllAuthPanels();
+    document.getElementById('authCheckEmailText').textContent = msg;
+    document.getElementById('authCheckEmail').style.display = 'flex';
+  }
+  function showAuthSpinner(text){
+    hideAllAuthPanels();
+    document.getElementById('authSpinnerText').textContent = text || 'Un momento…';
+    document.getElementById('authSpinner').style.display = 'flex';
+  }
+  function showAuthErrorPanel(msg){
+    hideAllAuthPanels();
+    document.getElementById('authErrorText').textContent = msg;
+    document.getElementById('authError').style.display = 'flex';
+  }
+
+  async function openAuthPanel(){
+    document.getElementById('authOverlay').classList.add('show');
+    if(currentUser){ showProfilePanel(); return; }
+    showAuthSpinner('Conectando…');
+    try{
+      await ensureAuthInit();
+      if(currentUser) showProfilePanel();
+      else showAuthLogin();
+    } catch(err){
+      showAuthErrorPanel(describeOnlineError(err));
+    }
+  }
+
+  function closeAuthPanel(){
+    document.getElementById('authOverlay').classList.remove('show');
+  }
+
+  async function handleLoginSubmit(){
+    const email = (document.getElementById('loginEmail').value || '').trim();
+    const password = document.getElementById('loginPassword').value || '';
+    if(!email || !password){ showAuthErrorPanel('Completá el email y la contraseña.'); return; }
+    showAuthSpinner('Iniciando sesión…');
+    try{
+      const sb = await ensureAuthInit();
+      const { data, error } = await withTimeout(sb.auth.signInWithPassword({ email, password }), 8000, 'No se pudo iniciar sesión.');
+      if(error) throw error;
+      if(data && data.session) await handleSignedIn(data.session);
+      showProfilePanel();
+    } catch(err){
+      showAuthErrorPanel(describeOnlineError(err));
+    }
+  }
+
+  async function handleRegisterSubmit(){
+    const name = (document.getElementById('registerName').value || '').trim();
+    const email = (document.getElementById('registerEmail').value || '').trim();
+    const password = document.getElementById('registerPassword').value || '';
+    const password2 = document.getElementById('registerPassword2').value || '';
+    if(!name || !email || !password){ showAuthErrorPanel('Completá tu nombre, email y contraseña.'); return; }
+    if(password.length < 6){ showAuthErrorPanel('La contraseña tiene que tener al menos 6 caracteres.'); return; }
+    if(password !== password2){ showAuthErrorPanel('Las contraseñas no coinciden.'); return; }
+    showAuthSpinner('Creando cuenta…');
+    try{
+      const sb = await ensureAuthInit();
+      const { data, error } = await withTimeout(
+        sb.auth.signUp({ email, password, options: { data: { display_name: name }, emailRedirectTo: authRedirectUrl() } }),
+        8000, 'No se pudo crear la cuenta.'
+      );
+      if(error) throw error;
+      if(data && data.session){
+        await handleSignedIn(data.session);
+        showProfilePanel();
+      } else {
+        showAuthCheckEmail('Te mandamos un mail para confirmar tu cuenta. Abrí el link y después volvé a iniciar sesión acá.');
+      }
+    } catch(err){
+      showAuthErrorPanel(describeOnlineError(err));
+    }
+  }
+
+  async function handleForgotSubmit(){
+    const email = (document.getElementById('forgotEmail').value || '').trim();
+    if(!email){ showAuthErrorPanel('Ingresá tu email.'); return; }
+    showAuthSpinner('Enviando…');
+    try{
+      const sb = await ensureAuthInit();
+      const { error } = await withTimeout(
+        sb.auth.resetPasswordForEmail(email, { redirectTo: authRedirectUrl() }),
+        8000, 'No se pudo enviar el mail de recuperación.'
+      );
+      if(error) throw error;
+      showAuthCheckEmail('Te mandamos un link para elegir una contraseña nueva. Abrilo desde este mismo navegador.');
+    } catch(err){
+      showAuthErrorPanel(describeOnlineError(err));
+    }
+  }
+
+  async function handleResetSubmit(){
+    const p1 = document.getElementById('resetPassword').value || '';
+    const p2 = document.getElementById('resetPassword2').value || '';
+    if(p1.length < 6){ showAuthErrorPanel('La contraseña tiene que tener al menos 6 caracteres.'); return; }
+    if(p1 !== p2){ showAuthErrorPanel('Las contraseñas no coinciden.'); return; }
+    showAuthSpinner('Guardando…');
+    try{
+      const sb = await ensureAuthInit();
+      const { data, error } = await withTimeout(sb.auth.updateUser({ password: p1 }), 8000, 'No se pudo guardar la contraseña.');
+      if(error) throw error;
+      if(data && data.user) currentUser = data.user;
+      showProfilePanel();
+    } catch(err){
+      showAuthErrorPanel(describeOnlineError(err));
+    }
+  }
+
+  async function handleSignOut(){
+    try{
+      const sb = await ensureSupabase();
+      await sb.auth.signOut();
+    } catch(err){ /* ignore */ }
+    handleSignedOut();
+    closeAuthPanel();
+  }
+
+  async function handleEditDisplayName(){
+    if(!currentUser || !currentProfile) return;
+    const next = prompt('Tu nombre:', currentProfile.display_name || '');
+    if(next === null) return;
+    const trimmed = next.trim().slice(0,24);
+    if(!trimmed) return;
+    try{
+      const sb = await ensureSupabase();
+      const { error } = await sb.from('profiles').update({ display_name: trimmed, updated_at: new Date().toISOString() }).eq('id', currentUser.id);
+      if(error) throw error;
+      currentProfile.display_name = trimmed;
+      document.getElementById('profileNameText').textContent = trimmed;
+      updateProfileFab();
+    } catch(err){
+      showStartToast('⚠️ No se pudo guardar el nombre.');
+    }
+  }
+
+  function showProfilePanel(){
+    hideAllAuthPanels();
+    document.getElementById('profilePanel').style.display = 'flex';
+    renderProfileHeader();
+    document.getElementById('historyList').innerHTML = '<div class="history-empty">Cargando…</div>';
+    fetchProfileStats();
+  }
+
+  function renderProfileHeader(){
+    const name = (currentProfile && currentProfile.display_name) || (currentUser && currentUser.email) || 'Jugador';
+    document.getElementById('profileNameText').textContent = name;
+    document.getElementById('profileEmailText').textContent = (currentUser && currentUser.email) || '';
+    const img = document.getElementById('profileAvatarImg');
+    const fallback = document.getElementById('profileAvatarFallback');
+    if(currentProfile && currentProfile.avatar_url){
+      img.src = currentProfile.avatar_url;
+      img.style.display = 'block';
+      fallback.style.display = 'none';
+    } else {
+      img.style.display = 'none';
+      fallback.style.display = 'flex';
+      fallback.textContent = name.slice(0,1).toUpperCase();
+    }
+  }
+
+  async function fetchProfileStats(){
+    try{
+      const sb = await ensureSupabase();
+      const [infRes, wldRes, histRes] = await Promise.all([
+        sb.from('infinite_best_scores').select('difficulty,best_score').eq('user_id', currentUser.id),
+        sb.from('online_stats').select('wins,losses,draws').eq('user_id', currentUser.id).maybeSingle(),
+        sb.from('match_history').select('*')
+          .or(`player_x_id.eq.${currentUser.id},player_o_id.eq.${currentUser.id}`)
+          .order('finished_at', { ascending: false }).limit(20)
+      ]);
+
+      const infMap = { easy:'–', medium:'–', hard:'–' };
+      (infRes.data || []).forEach(row => { infMap[row.difficulty] = row.best_score; });
+      document.getElementById('statInfEasy').textContent = infMap.easy;
+      document.getElementById('statInfMedium').textContent = infMap.medium;
+      document.getElementById('statInfHard').textContent = infMap.hard;
+
+      const wld = wldRes.data || { wins:0, losses:0, draws:0 };
+      document.getElementById('statWins').textContent = wld.wins;
+      document.getElementById('statLosses').textContent = wld.losses;
+      document.getElementById('statDraws').textContent = wld.draws;
+
+      renderHistoryList(histRes.data || []);
+    } catch(err){
+      document.getElementById('historyList').innerHTML = '<div class="history-empty">No se pudieron cargar las estadísticas.</div>';
+    }
+  }
+
+  function renderHistoryList(rows){
+    const el = document.getElementById('historyList');
+    if(!rows.length){ el.innerHTML = '<div class="history-empty">Todavía no jugaste ninguna partida online.</div>'; return; }
+    el.innerHTML = rows.map(row => {
+      const amX = row.player_x_id === currentUser.id;
+      const rivalName = amX ? row.player_o_name : row.player_x_name;
+      let resultClass = 'draw', resultText = 'Empate';
+      if(row.winner !== 'D'){
+        const won = (row.winner === 'X' && amX) || (row.winner === 'O' && !amX);
+        resultClass = won ? 'win' : 'loss';
+        resultText = won ? 'Ganaste' : 'Perdiste';
+      }
+      const d = new Date(row.finished_at);
+      const dateText = isNaN(d) ? '' : d.toLocaleDateString('es-AR', { day:'2-digit', month:'2-digit' });
+      return `<div class="history-item"><span class="history-players">vs ${escapeHtml(rivalName || 'Rival')} · ${dateText}</span><span class="history-result ${resultClass}">${resultText}</span></div>`;
+    }).join('');
+  }
+
+  // ---- avatar upload + circular crop ----
+
+  function handleAvatarFileSelected(event){
+    const file = event.target.files && event.target.files[0];
+    event.target.value = ''; // allow re-selecting the same file later
+    if(!file) return;
+    if(!file.type || !file.type.startsWith('image/')){ showStartToast('⚠️ Elegí un archivo de imagen.'); return; }
+    const reader = new FileReader();
+    reader.onload = () => openAvatarCropper(reader.result);
+    reader.readAsDataURL(file);
+  }
+
+  function openAvatarCropper(dataUrl){
+    const img = document.getElementById('cropImg');
+    img.onload = () => {
+      const V = document.getElementById('cropViewport').clientWidth || 240;
+      const iw = img.naturalWidth, ih = img.naturalHeight;
+      const baseScale = Math.max(V / iw, V / ih);
+      cropState = { iw, ih, V, baseScale, scale: 1, offsetX: 0, offsetY: 0 };
+      document.getElementById('cropZoomSlider').value = 1;
+      centerCropImage();
+      updateCropTransform();
+    };
+    img.src = dataUrl;
+    document.getElementById('cropOverlay').classList.add('show');
+  }
+
+  function centerCropImage(){
+    const { V, iw, ih, baseScale, scale } = cropState;
+    const dw = iw * baseScale * scale, dh = ih * baseScale * scale;
+    cropState.offsetX = (V - dw) / 2;
+    cropState.offsetY = (V - dh) / 2;
+  }
+
+  function updateCropTransform(){
+    const img = document.getElementById('cropImg');
+    const { iw, ih, baseScale, scale, offsetX, offsetY } = cropState;
+    img.style.width = (iw * baseScale * scale) + 'px';
+    img.style.height = (ih * baseScale * scale) + 'px';
+    img.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+  }
+
+  function clampCropOffset(){
+    const { V, iw, ih, baseScale, scale } = cropState;
+    const dw = iw * baseScale * scale, dh = ih * baseScale * scale;
+    const minX = Math.min(0, V - dw), maxX = 0;
+    const minY = Math.min(0, V - dh), maxY = 0;
+    cropState.offsetX = Math.max(minX, Math.min(maxX, cropState.offsetX));
+    cropState.offsetY = Math.max(minY, Math.min(maxY, cropState.offsetY));
+  }
+
+  function handleCropZoomInput(){
+    if(!cropState) return;
+    const V = cropState.V;
+    const cx = V/2, cy = V/2;
+    const { iw, ih, baseScale, scale: oldScale, offsetX, offsetY } = cropState;
+    const imgX = (cx - offsetX) / (baseScale * oldScale);
+    const imgY = (cy - offsetY) / (baseScale * oldScale);
+    const newScale = parseFloat(document.getElementById('cropZoomSlider').value) || 1;
+    cropState.scale = newScale;
+    cropState.offsetX = cx - imgX * baseScale * newScale;
+    cropState.offsetY = cy - imgY * baseScale * newScale;
+    clampCropOffset();
+    updateCropTransform();
+  }
+
+  let cropDrag = null;
+  function setupCropDrag(){
+    const vp = document.getElementById('cropViewport');
+    if(!vp) return;
+    vp.addEventListener('pointerdown', (e) => {
+      if(!cropState) return;
+      cropDrag = { x: e.clientX, y: e.clientY, offX: cropState.offsetX, offY: cropState.offsetY };
+      vp.setPointerCapture(e.pointerId);
+    });
+    vp.addEventListener('pointermove', (e) => {
+      if(!cropDrag || !cropState) return;
+      cropState.offsetX = cropDrag.offX + (e.clientX - cropDrag.x);
+      cropState.offsetY = cropDrag.offY + (e.clientY - cropDrag.y);
+      clampCropOffset();
+      updateCropTransform();
+    });
+    const endDrag = () => { cropDrag = null; };
+    vp.addEventListener('pointerup', endDrag);
+    vp.addEventListener('pointercancel', endDrag);
+    vp.addEventListener('pointerleave', endDrag);
+  }
+
+  function cancelAvatarCrop(){
+    document.getElementById('cropOverlay').classList.remove('show');
+    cropState = null;
+  }
+
+  function confirmAvatarCrop(){
+    if(!cropState) return;
+    const OUT = 480;
+    const k = OUT / cropState.V;
+    const canvas = document.createElement('canvas');
+    canvas.width = OUT; canvas.height = OUT;
+    const ctx = canvas.getContext('2d');
+    const img = document.getElementById('cropImg');
+    const { iw, ih, baseScale, scale, offsetX, offsetY } = cropState;
+    const dw = iw * baseScale * scale * k, dh = ih * baseScale * scale * k;
+    ctx.drawImage(img, offsetX * k, offsetY * k, dw, dh);
+    canvas.toBlob((blob) => {
+      if(!blob){ showStartToast('⚠️ No se pudo procesar la imagen.'); return; }
+      document.getElementById('cropOverlay').classList.remove('show');
+      uploadAvatar(blob);
+    }, 'image/png', 0.92);
+  }
+
+  async function uploadAvatar(blob){
+    if(!currentUser) return;
+    showStartToast('Subiendo foto…');
+    try{
+      const sb = await ensureSupabase();
+      const path = `${currentUser.id}/avatar.png`;
+      const { error: upErr } = await sb.storage.from('avatars').upload(path, blob, { upsert: true, contentType: 'image/png', cacheControl: '3600' });
+      if(upErr) throw upErr;
+      const { data: pub } = sb.storage.from('avatars').getPublicUrl(path);
+      const url = pub.publicUrl + '?v=' + Date.now();
+      const { error: profErr } = await sb.from('profiles').update({ avatar_url: url, updated_at: new Date().toISOString() }).eq('id', currentUser.id);
+      if(profErr) throw profErr;
+      currentProfile = currentProfile || {};
+      currentProfile.avatar_url = url;
+      renderProfileHeader();
+      updateProfileFab();
+      showStartToast('✅ Foto de perfil actualizada');
+    } catch(err){
+      showStartToast('⚠️ No se pudo subir la foto: ' + (err && err.message ? err.message : 'error desconocido'));
+    }
+  }
+
+  // ---- boot: handle email-confirmation / password-recovery links, wire crop drag ----
+
+  document.addEventListener('DOMContentLoaded', () => {
+    setupCropDrag();
+    const hash = window.location.hash || '';
+    if(hash.includes('type=recovery') || hash.includes('type=signup') || hash.includes('access_token')){
+      document.getElementById('authOverlay').classList.add('show');
+      showAuthSpinner('Verificando…');
+      ensureAuthInit().then(() => {
+        setTimeout(() => {
+          const stillSpinning = document.getElementById('authSpinner').style.display !== 'none';
+          if(stillSpinning){ currentUser ? showProfilePanel() : showAuthLogin(); }
+        }, 1500);
+      }).catch(err => showAuthErrorPanel(describeOnlineError(err)));
+    }
+  });
 
   // ---------- core rules (shared by UI and AI search) ----------
 
@@ -1952,6 +2840,12 @@
       } else {
         setTimeout(() => endInfiniteRun(winner), 1000);
       }
+    }
+
+    if(onlineMode && !matchResultRecorded){
+      matchResultRecorded = true;
+      recordOwnOnlineStat(myOnlineResult(winner));
+      recordMatchHistory(winner);
     }
   }
 
