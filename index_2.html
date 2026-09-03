@@ -1,0 +1,2234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TA-TE-TI GIGANTE</title>
+<style>
+  :root{
+    --bg-1:#0f0c29;
+    --bg-2:#1a1440;
+    --bg-3:#2b1055;
+    --card:rgba(255,255,255,0.06);
+    --card-border:rgba(255,255,255,0.12);
+    --ink:#f3f1ff;
+    --ink-dim:#a9a3c9;
+    --x-color:#7c5cff;
+    --x-glow:#a78bfa;
+    --o-color:#ff5c9a;
+    --o-glow:#ff8fb8;
+    --accent:#42e8c4;
+    --win:#ffd166;
+    --radius:22px;
+  }
+
+  *{box-sizing:border-box;}
+  html{margin:0;}
+  body{margin:0;}
+
+  body{
+    font-family:'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    min-height:100vh;
+    min-height:100dvh;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:20px;
+    padding-top:max(20px, env(safe-area-inset-top));
+    padding-bottom:max(20px, env(safe-area-inset-bottom));
+    color:var(--ink);
+    background:
+      radial-gradient(circle at 15% 20%, rgba(124,92,255,0.35), transparent 45%),
+      radial-gradient(circle at 85% 15%, rgba(255,92,154,0.28), transparent 45%),
+      radial-gradient(circle at 50% 90%, rgba(66,232,196,0.18), transparent 55%),
+      linear-gradient(135deg, var(--bg-1), var(--bg-2) 45%, var(--bg-3));
+    background-size:180% 180%, 180% 180%, 180% 180%, 220% 220%;
+    animation:bgshift 18s ease-in-out infinite;
+    overflow-x:hidden;
+  }
+
+  @keyframes bgshift{
+    0%{background-position:0% 0%, 100% 0%, 50% 100%, 0% 0%;}
+    50%{background-position:20% 30%, 80% 20%, 45% 80%, 100% 100%;}
+    100%{background-position:0% 0%, 100% 0%, 50% 100%, 0% 0%;}
+  }
+
+  .stage{
+    width:100%;
+    max-width:540px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:16px;
+  }
+
+  .title{text-align:center;margin:0;}
+  .title h1{
+    margin:0;
+    font-size:clamp(1.7rem, 7vw, 2.5rem);
+    letter-spacing:0.1em;
+    font-weight:800;
+    background:linear-gradient(90deg, var(--x-glow), var(--accent) 50%, var(--o-glow));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    filter:drop-shadow(0 2px 18px rgba(124,92,255,0.35));
+  }
+  .title p{
+    margin:4px 0 0;
+    color:var(--ink-dim);
+    font-size:0.8rem;
+    letter-spacing:0.05em;
+  }
+
+  .card{
+    width:100%;
+    background:var(--card);
+    border:1px solid var(--card-border);
+    border-radius:var(--radius);
+    padding:20px;
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    box-shadow:0 20px 60px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08);
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+
+  .mode-toggle{
+    display:flex;
+    background:rgba(255,255,255,0.05);
+    border:1px solid var(--card-border);
+    border-radius:999px;
+    padding:4px;
+    gap:4px;
+  }
+  .mode-toggle button{
+    flex:1;
+    border:none;
+    background:transparent;
+    color:var(--ink-dim);
+    font-size:0.8rem;
+    font-weight:600;
+    padding:9px 8px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:all 0.25s ease;
+  }
+  .mode-toggle button.active{
+    background:linear-gradient(90deg, var(--x-color), var(--o-color));
+    color:#fff;
+    box-shadow:0 6px 18px rgba(124,92,255,0.35);
+  }
+  .mode-toggle button:not(.active):hover{
+    color:var(--ink);
+    background:rgba(255,255,255,0.06);
+  }
+
+  .difficulty-toggle{
+    display:flex;
+    gap:6px;
+  }
+  .diff-btn{
+    flex:1;
+    border:1px solid var(--card-border);
+    background:rgba(255,255,255,0.04);
+    color:var(--ink-dim);
+    font-size:0.74rem;
+    font-weight:700;
+    padding:8px 4px;
+    border-radius:10px;
+    cursor:pointer;
+    transition:all 0.2s ease;
+  }
+  .diff-btn:hover{background:rgba(255,255,255,0.09); color:var(--ink);}
+  .diff-btn.active[data-diff="easy"]{
+    background:rgba(66,232,196,0.18); border-color:var(--accent); color:var(--accent);
+  }
+  .diff-btn.active[data-diff="medium"]{
+    background:rgba(255,209,102,0.18); border-color:var(--win); color:var(--win);
+  }
+  .diff-btn.active[data-diff="hard"]{
+    background:linear-gradient(90deg, rgba(124,92,255,0.3), rgba(255,92,154,0.3));
+    border-color:var(--x-color); color:#fff;
+  }
+
+  .mode-indicator{
+    align-self:center;
+    font-size:0.68rem;
+    font-weight:700;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    color:var(--ink-dim);
+    background:rgba(255,255,255,0.04);
+    border:1px solid var(--card-border);
+    border-radius:999px;
+    padding:6px 14px;
+  }
+
+  .scoreboard{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:10px;
+  }
+  .score-item{
+    background:rgba(255,255,255,0.04);
+    border:1px solid var(--card-border);
+    border-radius:14px;
+    padding:8px 6px;
+    text-align:center;
+  }
+  .score-item .label{
+    font-size:0.62rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--ink-dim);
+  }
+  .score-item .value{font-size:1.35rem;font-weight:800;margin-top:2px;}
+  .score-item.x .value{color:var(--x-glow);}
+  .score-item.o .value{color:var(--o-glow);}
+  .score-item.d .value{color:var(--accent);}
+  .score-item.pulse{
+    box-shadow:0 0 0 3px rgba(255,255,255,0.06), 0 0 22px rgba(124,92,255,0.35);
+    animation:pop 0.5s ease;
+  }
+  @keyframes pop{
+    0%{transform:scale(1);}
+    35%{transform:scale(1.08);}
+    100%{transform:scale(1);}
+  }
+
+  .status{
+    text-align:center;
+    min-height:26px;
+    font-size:0.98rem;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+  }
+  .status .who{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:800;
+  }
+  .status .who.x{color:var(--x-glow); text-shadow:0 0 12px rgba(124,92,255,0.7);}
+  .status .who.o{color:var(--o-glow); text-shadow:0 0 12px rgba(255,92,154,0.7);}
+
+  .hint{
+    text-align:center;
+    font-size:0.72rem;
+    color:var(--ink-dim);
+    margin-top:-8px;
+  }
+
+  /* Mega board */
+  .mega-wrap{
+    position:relative;
+    width:100%;
+    aspect-ratio:1/1;
+  }
+  .mega-board{
+    position:relative;
+    width:100%;
+    height:100%;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    grid-template-rows:repeat(3,1fr);
+    gap:8px;
+    padding:8px;
+    background:rgba(0,0,0,0.18);
+    border-radius:18px;
+    border:1px solid var(--card-border);
+  }
+  .mega-board.thinking{opacity:0.75; pointer-events:none;}
+
+  .quadrant{
+    position:relative;
+    border-radius:12px;
+    background:rgba(255,255,255,0.03);
+    border:2px solid rgba(255,255,255,0.08);
+    overflow:hidden;
+    transition:border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  }
+  .quadrant.active{
+    border-color:var(--accent);
+    box-shadow:0 0 0 2px rgba(66,232,196,0.15), 0 0 18px rgba(66,232,196,0.35);
+    background:rgba(66,232,196,0.05);
+  }
+  .quadrant.win-quad{
+    border-color:var(--win);
+    animation:winpulse 1.1s ease-in-out infinite;
+  }
+  @keyframes winpulse{
+    0%,100%{box-shadow:0 0 0 0 rgba(255,209,102,0.35);}
+    50%{box-shadow:0 0 0 8px rgba(255,209,102,0);}
+  }
+
+  .mini-board{
+    position:relative;
+    width:100%;
+    height:100%;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    grid-template-rows:repeat(3,1fr);
+    gap:3px;
+    padding:4px;
+    transition:opacity 0.3s ease, filter 0.3s ease;
+  }
+  .quadrant.decided .mini-board{opacity:0.22; filter:saturate(0.6);}
+
+  .mcell{
+    position:relative;
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:4px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:background 0.15s ease, transform 0.1s ease;
+  }
+  .quadrant.active .mcell:not(.filled):hover{
+    background:rgba(255,255,255,0.12);
+    transform:scale(1.04);
+    cursor:pointer;
+  }
+  .quadrant.active .mcell:not(.filled){cursor:pointer;}
+  .quadrant:not(.active) .mcell{cursor:default;}
+
+  .mcell svg{width:66%;height:66%;overflow:visible;}
+
+  .mark-x path{
+    fill:none;
+    stroke:var(--x-color);
+    stroke-width:11;
+    stroke-linecap:round;
+    filter:drop-shadow(0 0 6px rgba(124,92,255,0.6));
+    stroke-dasharray:150;
+    stroke-dashoffset:150;
+    animation:draw 0.28s ease forwards;
+  }
+  .mark-x path.p2{animation-delay:0.13s;}
+  .mark-o circle{
+    fill:none;
+    stroke:var(--o-color);
+    stroke-width:11;
+    filter:drop-shadow(0 0 6px rgba(255,92,154,0.6));
+    stroke-dasharray:290;
+    stroke-dashoffset:290;
+    animation:draw 0.38s ease forwards;
+  }
+  @keyframes draw{to{stroke-dashoffset:0;}}
+
+  .quad-mark{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    pointer-events:none;
+    opacity:0;
+    transform:scale(0.5);
+  }
+  .quad-mark.show{
+    animation:markin 0.4s cubic-bezier(.34,1.56,.64,1) forwards;
+  }
+  @keyframes markin{
+    to{opacity:1; transform:scale(1);}
+  }
+  .quad-mark svg{width:62%;height:62%;overflow:visible;}
+  .quad-mark .mark-x path{stroke-width:9; animation:none; stroke-dashoffset:0;}
+  .quad-mark .mark-o circle{stroke-width:9; animation:none; stroke-dashoffset:0;}
+  .draw-mark{
+    font-size:2.6rem;
+    font-weight:800;
+    color:var(--ink-dim);
+    text-shadow:0 0 14px rgba(169,163,201,0.5);
+  }
+
+  .quadrant.decided-x{background:rgba(124,92,255,0.06);}
+  .quadrant.decided-o{background:rgba(255,92,154,0.06);}
+  .quadrant.decided-d{background:rgba(169,163,201,0.05);}
+
+  .win-line{
+    position:absolute;
+    top:0;left:0;
+    width:100%;height:100%;
+    pointer-events:none;
+    z-index:6;
+  }
+  .win-line line{
+    stroke:var(--win);
+    stroke-width:6;
+    stroke-linecap:round;
+    filter:drop-shadow(0 0 10px rgba(255,209,102,0.85));
+    stroke-dasharray:400;
+    stroke-dashoffset:400;
+  }
+  .win-line line.draw-on{animation:drawline 0.5s ease forwards;}
+  @keyframes drawline{to{stroke-dashoffset:0;}}
+
+  .controls{display:flex;gap:10px;}
+  .btn{
+    flex:1;
+    border:none;
+    padding:12px 14px;
+    border-radius:14px;
+    font-size:0.85rem;
+    font-weight:700;
+    cursor:pointer;
+    transition:transform 0.15s ease, box-shadow 0.2s ease;
+    display:flex;align-items:center;justify-content:center;gap:6px;
+  }
+  .btn-primary{
+    background:linear-gradient(90deg, var(--x-color), var(--o-color));
+    color:#fff;
+    box-shadow:0 10px 26px rgba(124,92,255,0.35);
+  }
+  .btn-ghost{
+    background:rgba(255,255,255,0.06);
+    color:var(--ink-dim);
+    border:1px solid var(--card-border);
+  }
+  .btn:hover{transform:translateY(-2px);}
+  .btn:active{transform:translateY(0);}
+
+  .footer-note{text-align:center;color:var(--ink-dim);font-size:0.68rem;}
+
+  /* Coin flip overlay */
+  .coin-overlay{
+    position:fixed;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    background:rgba(8,6,20,0.72);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transition:opacity 0.3s ease, visibility 0.3s ease;
+    z-index:100;
+  }
+  .coin-overlay.show{opacity:1; visibility:visible; pointer-events:auto;}
+
+  .coin-caption{
+    color:var(--ink-dim);
+    font-size:0.85rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+  }
+
+  .coin-stage{
+    position:relative;
+    width:180px;
+    height:220px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    perspective:900px;
+  }
+
+  .coin-shadow{
+    position:absolute;
+    bottom:14px;
+    width:96px;
+    height:20px;
+    border-radius:50%;
+    background:radial-gradient(ellipse, rgba(0,0,0,0.55), transparent 72%);
+  }
+
+  .coin-hop{
+    position:relative;
+    width:128px;
+    height:128px;
+    margin-bottom:34px;
+  }
+
+  .coin{
+    position:relative;
+    width:128px;
+    height:128px;
+    transform-style:preserve-3d;
+  }
+
+  .coin-face{
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:3.4rem;
+    font-weight:800;
+    backface-visibility:hidden;
+    background:radial-gradient(circle at 34% 28%, #fff8e0, #ffd76a 38%, #d69a1f 70%, #8a5a10 100%);
+    box-shadow:
+      inset 0 0 0 6px rgba(255,255,255,0.28),
+      inset 0 0 22px rgba(0,0,0,0.35),
+      0 10px 26px rgba(0,0,0,0.5);
+    color:#5c3b0a;
+    text-shadow:0 1px 0 rgba(255,255,255,0.55), 0 -1px 1px rgba(0,0,0,0.35);
+  }
+  .coin-face::before{
+    content:'';
+    position:absolute;
+    inset:8px;
+    border-radius:50%;
+    border:2px dashed rgba(140,90,20,0.45);
+  }
+  .coin-back{transform:rotateY(180deg);}
+
+  .coin-spark{
+    position:fixed;
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:radial-gradient(circle, #fff6d0, #ffcf4d);
+    box-shadow:0 0 8px rgba(255,215,90,0.85);
+    pointer-events:none;
+    z-index:101;
+  }
+
+  .coin-result{
+    text-align:center;
+    font-size:1.25rem;
+    font-weight:800;
+    opacity:0;
+    transform:translateY(8px);
+    transition:opacity 0.35s ease, transform 0.35s ease;
+  }
+  .coin-result.show{opacity:1; transform:translateY(0);}
+
+  .confetti{
+    position:fixed;top:-10px;width:8px;height:14px;border-radius:2px;
+    z-index:50;pointer-events:none;animation:fall linear forwards;
+  }
+  @keyframes fall{to{transform:translateY(110vh) rotate(540deg); opacity:0.9;}}
+
+  /* Start screen */
+  .start-screen{
+    width:100%;
+    max-width:520px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:22px;
+    animation:fadein 0.4s ease;
+  }
+  @keyframes fadein{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+  .start-title{text-align:center;}
+  .start-title h1{
+    margin:0;
+    font-size:clamp(2.4rem, 12vw, 4rem);
+    line-height:1.05;
+    letter-spacing:0.05em;
+    font-weight:900;
+    background:linear-gradient(90deg, var(--x-glow), var(--accent) 50%, var(--o-glow));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    filter:drop-shadow(0 4px 26px rgba(124,92,255,0.45));
+  }
+  .start-title p{
+    margin:10px 0 0;
+    color:var(--ink-dim);
+    font-size:0.9rem;
+    letter-spacing:0.04em;
+  }
+
+  .start-menu, .start-diff{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+
+  .start-option{
+    position:relative;
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:2px;
+    padding:20px 18px;
+    border-radius:var(--radius);
+    border:1px solid var(--card-border);
+    background:var(--card);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    color:var(--ink);
+    cursor:pointer;
+    box-shadow:0 14px 34px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
+    transition:transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  }
+  .start-option:hover{
+    transform:translateY(-3px);
+    border-color:rgba(255,255,255,0.28);
+    box-shadow:0 18px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+  .start-option:active{transform:translateY(-1px);}
+
+  .start-option[data-kind="single"]{border-color:rgba(124,92,255,0.35);}
+  .start-option[data-kind="infinite"]{border-color:rgba(255,209,102,0.4);}
+  .start-option[data-kind="coop"]{border-color:rgba(66,232,196,0.35);}
+  .start-option[data-kind="online"]{border-color:rgba(255,92,154,0.25);}
+
+  .start-icon{font-size:2rem;}
+  .start-label{font-size:1.05rem;font-weight:800;letter-spacing:0.02em;}
+  .start-desc{font-size:0.76rem;color:var(--ink-dim);}
+
+  .start-option-locked{opacity:0.72;}
+  .start-badge{
+    position:absolute;
+    top:10px; right:10px;
+    font-size:0.6rem;
+    font-weight:800;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    color:#fff;
+    background:linear-gradient(90deg, var(--x-color), var(--o-color));
+    padding:4px 8px;
+    border-radius:999px;
+  }
+
+  .start-diff-title{
+    text-align:center;
+    font-size:0.85rem;
+    color:var(--ink-dim);
+    letter-spacing:0.03em;
+  }
+  .start-diff-options{display:flex; flex-direction:column; gap:12px;}
+  .start-diff-btn{
+    width:100%;
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    padding:16px 18px;
+    border-radius:16px;
+    border:1px solid var(--card-border);
+    background:var(--card);
+    color:var(--ink);
+    cursor:pointer;
+    transition:transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  }
+  .start-diff-btn:hover{transform:translateY(-2px);}
+  .start-diff-btn[data-diff="easy"]:hover{border-color:var(--accent);}
+  .start-diff-btn[data-diff="medium"]:hover{border-color:var(--win);}
+  .start-diff-btn[data-diff="hard"]:hover{border-color:var(--x-color);}
+  .diff-name{font-weight:800; font-size:1rem;}
+  .diff-desc{font-size:0.74rem; color:var(--ink-dim);}
+
+  .start-back{
+    align-self:center;
+    margin-top:2px;
+    background:none;
+    border:none;
+    color:var(--ink-dim);
+    font-size:0.78rem;
+    cursor:pointer;
+    padding:6px 10px;
+  }
+  .start-back:hover{color:var(--ink);}
+
+  .start-toast{
+    position:fixed;
+    left:50%;
+    bottom:26px;
+    transform:translate(-50%, 12px);
+    background:rgba(20,16,40,0.92);
+    border:1px solid var(--card-border);
+    color:var(--ink);
+    padding:10px 18px;
+    border-radius:999px;
+    font-size:0.8rem;
+    font-weight:600;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.25s ease, transform 0.25s ease;
+    z-index:120;
+    box-shadow:0 10px 26px rgba(0,0,0,0.4);
+    text-align:center;
+    max-width:90vw;
+  }
+  .start-toast.show{opacity:1; transform:translate(-50%, 0);}
+
+  .btn-icon{flex:0 0 48px; padding:12px 0;}
+
+  /* Infinite mode */
+  .infinite-score{
+    align-self:center;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:0.78rem;
+    font-weight:800;
+    color:var(--win);
+    background:rgba(255,209,102,0.12);
+    border:1px solid rgba(255,209,102,0.35);
+    border-radius:999px;
+    padding:6px 14px;
+  }
+
+  .infinite-overlay{
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:rgba(8,6,20,0.78);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transition:opacity 0.3s ease, visibility 0.3s ease;
+    z-index:110;
+  }
+  .infinite-overlay.show{opacity:1; visibility:visible; pointer-events:auto;}
+
+  .infinite-card{
+    width:100%;
+    max-width:320px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+    text-align:center;
+  }
+
+  .infinite-title{
+    font-size:1.15rem;
+    font-weight:800;
+    color:var(--ink);
+  }
+
+  .infinite-counter-wrap{
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding-top:30px;
+  }
+
+  .infinite-popup{
+    position:absolute;
+    top:0;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:1.15rem;
+    font-weight:800;
+    color:var(--win);
+    text-shadow:0 0 14px rgba(255,209,102,0.6);
+    pointer-events:none;
+    opacity:0;
+  }
+
+  .infinite-counter{
+    font-size:clamp(2.6rem, 12vw, 3.6rem);
+    font-weight:900;
+    background:linear-gradient(90deg, var(--x-glow), var(--accent) 50%, var(--o-glow));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    filter:drop-shadow(0 2px 18px rgba(124,92,255,0.35));
+  }
+  .infinite-counter.pop{animation:pop 0.4s ease;}
+
+  .infinite-caption{
+    color:var(--ink-dim);
+    font-size:0.85rem;
+    min-height:1.2em;
+  }
+  .infinite-caption strong{color:var(--ink); font-weight:800;}
+
+  .infinite-actions{
+    display:flex;
+    gap:10px;
+    width:100%;
+    margin-top:8px;
+  }
+
+  /* Online multiplayer lobby */
+  .online-lobby{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+  }
+  .lobby-choice, .lobby-join-form, .lobby-spinner, .lobby-waiting, .lobby-error{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+  }
+  .lobby-text{
+    text-align:center;
+    color:var(--ink-dim);
+    font-size:0.88rem;
+    line-height:1.4;
+  }
+  .lobby-actions{
+    width:100%;
+    display:flex;
+    gap:10px;
+  }
+  .code-input{
+    width:100%;
+    text-align:center;
+    font-size:1.15rem;
+    font-weight:700;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--ink);
+    background:rgba(255,255,255,0.05);
+    border:1px solid var(--card-border);
+    border-radius:14px;
+    padding:14px 12px;
+    outline:none;
+  }
+  .code-input:focus{border-color:var(--accent);}
+  .code-input::placeholder{color:var(--ink-dim); opacity:0.55; letter-spacing:0.1em;}
+
+  .lobby-spinner-dot{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    border:3px solid rgba(255,255,255,0.15);
+    border-top-color:var(--accent);
+    animation:spin 0.8s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .room-code-display{
+    font-size:clamp(1.5rem, 8vw, 2rem);
+    font-weight:900;
+    letter-spacing:0.08em;
+    background:linear-gradient(90deg, var(--x-glow), var(--accent) 50%, var(--o-glow));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    text-align:center;
+  }
+  .lobby-waiting-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    color:var(--ink-dim);
+    font-size:0.82rem;
+  }
+  .wait-dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:var(--accent);
+    animation:winpulse 1.1s ease-in-out infinite;
+  }
+  .lobby-error-text{
+    text-align:center;
+    color:var(--o-glow);
+    font-size:0.9rem;
+    line-height:1.4;
+  }
+
+  .room-chip{
+    align-self:center;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:0.72rem;
+    font-weight:700;
+    letter-spacing:0.03em;
+    color:var(--accent);
+    background:rgba(66,232,196,0.1);
+    border:1px solid rgba(66,232,196,0.3);
+    border-radius:999px;
+    padding:5px 12px;
+  }
+
+  @media (max-width:420px){
+    .stage{gap:12px;}
+    .card{padding:14px; gap:12px;}
+    .mega-board{gap:5px;padding:5px;}
+    .mini-board{gap:2px;padding:3px;}
+    .mcell{border-radius:3px;}
+    .quadrant{border-width:1.5px; border-radius:9px;}
+    .scoreboard{gap:6px;}
+    .score-item{padding:6px 4px;}
+    .score-item .value{font-size:1.15rem;}
+    .start-screen{gap:16px;}
+    .start-option{padding:16px 14px;}
+    .start-diff-btn{padding:13px 14px;}
+  }
+
+  @media (max-height:700px){
+    .stage{gap:10px;}
+    .card{padding:12px; gap:10px;}
+    .title p{display:none;}
+    .start-screen{gap:14px;}
+    .start-title p{display:none;}
+    .start-menu, .start-diff{gap:10px;}
+  }
+
+  @media (max-height:620px){
+    .footer-note{display:none;}
+    .hint{margin-top:-4px;}
+    .btn{padding:10px 12px;}
+    .start-option{padding:13px 14px;}
+    .start-icon{font-size:1.6rem;}
+  }
+</style>
+</head>
+<body>
+
+<div class="start-screen" id="startScreen">
+  <div class="start-title">
+    <h1>TA·TE·TI<br>GIGANTE</h1>
+    <p>Elegí cómo querés jugar</p>
+  </div>
+
+  <div class="start-menu" id="startMenu">
+    <button class="start-option" data-kind="single" onclick="chooseStartOption('single')">
+      <span class="start-icon">🤖</span>
+      <span class="start-label">Un Jugador</span>
+      <span class="start-desc">Vs la computadora</span>
+    </button>
+    <button class="start-option" data-kind="infinite" onclick="chooseStartOption('infinite')">
+      <span class="start-icon">♾️</span>
+      <span class="start-label">Modo Infinito</span>
+      <span class="start-desc">Encadená giga-tatetis y sumá puntos sin parar</span>
+    </button>
+    <button class="start-option" data-kind="coop" onclick="chooseStartOption('coop')">
+      <span class="start-icon">🧑‍🤝‍🧑</span>
+      <span class="start-label">Cooperativo Local</span>
+      <span class="start-desc">2 jugadores, mismo dispositivo</span>
+    </button>
+    <button class="start-option" data-kind="online" onclick="chooseStartOption('online')">
+      <span class="start-icon">🌐</span>
+      <span class="start-label">Multijugador</span>
+      <span class="start-desc">Online, con código de sala</span>
+    </button>
+  </div>
+
+  <div class="start-diff" id="startDiff" style="display:none;">
+    <div class="start-diff-title">Elegí la dificultad de la IA</div>
+    <div class="start-diff-options">
+      <button class="start-diff-btn" data-diff="easy" onclick="chooseStartDifficulty('easy')">
+        <span class="diff-name">Fácil</span>
+        <span class="diff-desc">Para relajarse</span>
+      </button>
+      <button class="start-diff-btn" data-diff="medium" onclick="chooseStartDifficulty('medium')">
+        <span class="diff-name">Medio</span>
+        <span class="diff-desc">Un desafío justo</span>
+      </button>
+      <button class="start-diff-btn" data-diff="hard" onclick="chooseStartDifficulty('hard')">
+        <span class="diff-name">Difícil</span>
+        <span class="diff-desc">Casi imposible</span>
+      </button>
+    </div>
+    <button class="start-back" onclick="showStartMenu()">← Volver</button>
+  </div>
+
+  <div class="online-lobby" id="onlineLobby" style="display:none;">
+    <div class="lobby-choice" id="lobbyChoice">
+      <div class="lobby-text">Jugá con alguien a distancia usando un código de sala.</div>
+      <div class="lobby-actions">
+        <button class="btn btn-primary" onclick="handleCreateRoomClick()">Crear sala</button>
+        <button class="btn btn-ghost" onclick="showLobbyJoinForm()">Unirse a sala</button>
+      </div>
+      <button class="start-back" onclick="showStartMenu()">← Volver</button>
+    </div>
+
+    <div class="lobby-join-form" id="lobbyJoinForm" style="display:none;">
+      <div class="lobby-text">Ingresá el código de la sala</div>
+      <input class="code-input" id="joinCodeInput" type="text" placeholder="ABC-DEF-GHJ" maxlength="11" autocomplete="off" autocapitalize="characters" spellcheck="false">
+      <div class="lobby-actions">
+        <button class="btn btn-primary" onclick="handleJoinRoomClick()">Unirse</button>
+      </div>
+      <button class="start-back" onclick="showLobbyChoice()">← Volver</button>
+    </div>
+
+    <div class="lobby-spinner" id="lobbySpinner" style="display:none;">
+      <div class="lobby-spinner-dot"></div>
+      <div class="lobby-text" id="lobbySpinnerText">Conectando…</div>
+    </div>
+
+    <div class="lobby-waiting" id="lobbyWaiting" style="display:none;">
+      <div class="lobby-text">Compartí este código con tu rival</div>
+      <div class="room-code-display" id="roomCodeDisplay">---------</div>
+      <button class="btn btn-ghost" onclick="copyRoomCode()" id="copyCodeBtn">📋 Copiar código</button>
+      <div class="lobby-waiting-row"><span class="wait-dot"></span> Esperando que se una tu rival…</div>
+      <button class="start-back" onclick="cancelOnlineWaiting()">← Cancelar</button>
+    </div>
+
+    <div class="lobby-error" id="lobbyError" style="display:none;">
+      <div class="lobby-error-text" id="lobbyErrorText"></div>
+      <button class="btn btn-ghost" onclick="showLobbyChoice()">← Volver</button>
+    </div>
+  </div>
+
+  <div class="start-toast" id="startToast"></div>
+</div>
+
+<div class="stage" id="gameStage" style="display:none;">
+  <div class="title">
+    <h1>TA·TE·TI GIGANTE</h1>
+    <p>9 tatetis en uno — ganá 3 cuadrantes en línea</p>
+  </div>
+
+  <div class="card">
+
+    <div class="mode-indicator" id="modeIndicator"></div>
+    <div class="infinite-score" id="infiniteScoreBadge" style="display:none;">⭐ <span id="infiniteScoreValue">0</span> puntos</div>
+    <div class="room-chip" id="roomChip" style="display:none;"></div>
+
+    <div class="scoreboard">
+      <div class="score-item x" id="scoreXBox">
+        <div class="label">✕ Jugador X</div>
+        <div class="value" id="scoreX">0</div>
+      </div>
+      <div class="score-item d" id="scoreDBox">
+        <div class="label">🤝 Empates</div>
+        <div class="value" id="scoreD">0</div>
+      </div>
+      <div class="score-item o" id="scoreOBox">
+        <div class="label" id="oLabel">○ Jugador O</div>
+        <div class="value" id="scoreO">0</div>
+      </div>
+    </div>
+
+    <div class="status" id="status"></div>
+    <div class="hint" id="hint">Jugá en cualquier cuadrante para empezar</div>
+
+    <div class="mega-wrap">
+      <div class="mega-board" id="megaBoard"></div>
+      <svg class="win-line" id="winLine" viewBox="0 0 300 300" preserveAspectRatio="none">
+        <line id="winLineEl" x1="0" y1="0" x2="0" y2="0" />
+      </svg>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-ghost btn-icon" onclick="goHome()" title="Menú principal">🏠</button>
+      <button class="btn btn-primary" onclick="newRound()">↻ Nueva Partida</button>
+      <button class="btn btn-ghost" onclick="resetScore()">Reiniciar Marcador</button>
+    </div>
+
+    <div class="footer-note">El cuadrante resaltado es donde te toca jugar. Si te mandan a uno ya resuelto, elegís cualquiera libre.</div>
+  </div>
+</div>
+
+<div class="coin-overlay" id="coinOverlay">
+  <div class="coin-caption" id="coinCaption">Sorteando quién empieza…</div>
+  <div class="coin-stage">
+    <div class="coin-shadow" id="coinShadow"></div>
+    <div class="coin-hop" id="coinHop">
+      <div class="coin" id="coin">
+        <div class="coin-face coin-front">✕</div>
+        <div class="coin-face coin-back">○</div>
+      </div>
+    </div>
+  </div>
+  <div class="coin-result" id="coinResult"></div>
+</div>
+
+<div class="infinite-overlay" id="infiniteOverlay">
+  <div class="infinite-card">
+    <div class="infinite-title" id="infiniteTitle">🎉 ¡Giga-Tateti ganado!</div>
+    <div class="infinite-counter-wrap">
+      <div class="infinite-popup" id="infinitePopup"></div>
+      <div class="infinite-counter" id="infiniteCounter">0</div>
+    </div>
+    <div class="infinite-caption" id="infiniteCaption">Sumando puntos…</div>
+    <div class="infinite-actions" id="infiniteActions" style="display:none;">
+      <button class="btn btn-primary" onclick="restartInfiniteRun()">↻ Jugar de nuevo</button>
+      <button class="btn btn-ghost" onclick="exitInfiniteToHome()">🏠 Menú</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const WIN_LINES = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+  ];
+
+  const megaBoardEl = document.getElementById('megaBoard');
+  const statusEl = document.getElementById('status');
+  const hintEl = document.getElementById('hint');
+  const winLineEl = document.getElementById('winLineEl');
+  const scoreXEl = document.getElementById('scoreX');
+  const scoreOEl = document.getElementById('scoreO');
+  const scoreDEl = document.getElementById('scoreD');
+  const oLabel = document.getElementById('oLabel');
+
+  let boards, subWinner, activeBoard, current, gameOver, winner, winLineIdx;
+  let quadrantEls = [], miniCellEls = [];
+  let mode = '2p';
+  let difficulty = 'medium'; // 'easy' | 'medium' | 'hard'
+  let scores = { X:0, O:0, D:0 };
+
+  // ---------- infinite mode state ----------
+  let infiniteMode = false;
+  let infiniteScore = 0;
+  let presetQuadrant = null; // { index, winner } — quadrant pre-decided at the start of a round
+  let roundQuadrantWinOrder = []; // quadrants X actually won during the current round (chronological)
+  let pendingStartKind = null; // 'single' | 'infinite' — which flow is waiting on a difficulty pick
+
+  // ---------- online mode state ----------
+  const SUPABASE_URL = 'https://kgbptaswbqimnglyfthb.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_G24wV8mY4a7aXPvjltERLg_2IeMPbgv';
+  let onlineMode = false;
+  let onlineRoomCode = null;   // normalized (no dashes) room code
+  let onlineMyMark = null;     // 'X' | 'O'
+  let onlineClientId = null;   // crypto.randomUUID(), generated once per session
+  let onlinePhase = null;      // 'waiting' | 'playing'
+  let onlineChannel = null;
+  let supabaseClient = null;
+  let supabaseLibPromise = null;
+
+  const DIFFICULTY_CONFIG = {
+    easy:   { maxDepth: 1, blunderChance: 0.55 },
+    medium: { maxDepth: 3, blunderChance: 0.18 },
+    hard:   { maxDepth: null, blunderChance: 0 } // null = full adaptive depth
+  };
+
+  function initState(startMark){
+    boards = Array.from({length:9}, () => Array(9).fill(null));
+    subWinner = Array(9).fill(null);
+    if(infiniteMode && presetQuadrant){
+      subWinner[presetQuadrant.index] = presetQuadrant.winner;
+    }
+    activeBoard = null;
+    current = startMark || 'X';
+    gameOver = false;
+    winner = null;
+    winLineIdx = null;
+    roundQuadrantWinOrder = [];
+  }
+
+  function buildMegaBoard(){
+    megaBoardEl.innerHTML = '';
+    quadrantEls = [];
+    miniCellEls = [];
+    for(let q=0;q<9;q++){
+      const quad = document.createElement('div');
+      quad.className = 'quadrant';
+
+      const mini = document.createElement('div');
+      mini.className = 'mini-board';
+      const cellsArr = [];
+      for(let c=0;c<9;c++){
+        const cell = document.createElement('div');
+        cell.className = 'mcell';
+        cell.addEventListener('click', () => handleCellClick(q,c));
+        mini.appendChild(cell);
+        cellsArr.push(cell);
+      }
+      quad.appendChild(mini);
+
+      const mark = document.createElement('div');
+      mark.className = 'quad-mark';
+      quad.appendChild(mark);
+
+      megaBoardEl.appendChild(quad);
+      quadrantEls.push(quad);
+      miniCellEls.push(cellsArr);
+    }
+  }
+
+  function markSVG(player){
+    if(player === 'X'){
+      return `<svg class="mark-x" viewBox="0 0 100 100">
+        <path class="p1" d="M18 18 L82 82" />
+        <path class="p2" d="M82 18 L18 82" />
+      </svg>`;
+    }
+    return `<svg class="mark-o" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="34" />
+    </svg>`;
+  }
+
+  const DIFFICULTY_LABELS = { easy:'Fácil', medium:'Medio', hard:'Difícil' };
+
+  function updateModeIndicator(){
+    const el = document.getElementById('modeIndicator');
+    if(!el) return;
+    if(onlineMode){
+      el.textContent = '🌐 Multijugador Online';
+      return;
+    }
+    if(infiniteMode){
+      el.textContent = `♾️ Modo Infinito · ${DIFFICULTY_LABELS[difficulty] || ''}`;
+      return;
+    }
+    el.textContent = mode === 'ai'
+      ? `🤖 Vs Computadora · ${DIFFICULTY_LABELS[difficulty] || ''}`
+      : '🧑‍🤝‍🧑 Cooperativo Local';
+  }
+
+  function setMode(m){
+    mode = m;
+    oLabel.textContent = m === 'ai' ? '🤖 Computadora' : '○ Jugador O';
+    updateModeIndicator();
+    newRound();
+  }
+
+  function setDifficulty(d){
+    difficulty = d;
+    updateModeIndicator();
+  }
+
+  // ---------- start screen ----------
+
+  let startToastTimer = null;
+
+  function chooseStartOption(kind){
+    if(kind === 'online'){
+      openOnlineLobby();
+      return;
+    }
+    if(kind === 'single' || kind === 'infinite'){
+      pendingStartKind = kind;
+      document.getElementById('startMenu').style.display = 'none';
+      document.getElementById('startDiff').style.display = 'flex';
+      return;
+    }
+    if(kind === 'coop'){
+      startGame('2p');
+    }
+  }
+
+  function showStartMenu(){
+    pendingStartKind = null;
+    document.getElementById('startDiff').style.display = 'none';
+    document.getElementById('onlineLobby').style.display = 'none';
+    document.getElementById('startMenu').style.display = 'flex';
+  }
+
+  function chooseStartDifficulty(d){
+    setDifficulty(d);
+    if(pendingStartKind === 'infinite'){
+      pendingStartKind = null;
+      startInfiniteMode();
+    } else {
+      pendingStartKind = null;
+      startGame('ai');
+    }
+  }
+
+  function showStartToast(msg){
+    const t = document.getElementById('startToast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(startToastTimer);
+    startToastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  function startGame(m){
+    infiniteMode = false;
+    updateInfiniteScoreUI();
+    document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('gameStage').style.display = 'flex';
+    setMode(m);
+  }
+
+  function goHome(){
+    infiniteMode = false;
+    updateInfiniteScoreUI();
+    document.getElementById('infiniteOverlay').classList.remove('show');
+    document.getElementById('infiniteActions').style.display = 'none';
+    leaveOnlineRoom();
+    document.getElementById('gameStage').style.display = 'none';
+    document.getElementById('startScreen').style.display = 'flex';
+    showStartMenu();
+  }
+
+  // ---------- infinite mode ----------
+
+  function updateInfiniteScoreUI(){
+    const badge = document.getElementById('infiniteScoreBadge');
+    if(!badge) return;
+    badge.style.display = infiniteMode ? 'flex' : 'none';
+    const valEl = document.getElementById('infiniteScoreValue');
+    if(valEl) valEl.textContent = infiniteScore;
+  }
+
+  function startInfiniteMode(){
+    infiniteMode = true;
+    infiniteScore = 0;
+    presetQuadrant = null;
+    document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('gameStage').style.display = 'flex';
+    updateInfiniteScoreUI();
+    setMode('ai');
+  }
+
+  function beginInfiniteRound(seedIndex){
+    presetQuadrant = (seedIndex !== null && seedIndex !== undefined) ? { index: seedIndex, winner: 'X' } : null;
+    beginRound('X');
+  }
+
+  function popInfiniteBonus(text){
+    const popupEl = document.getElementById('infinitePopup');
+    popupEl.textContent = text;
+    popupEl.style.opacity = 0;
+    popupEl.animate([
+      { transform:'translateY(6px) scale(0.8)', opacity:0 },
+      { transform:'translateY(-18px) scale(1.15)', opacity:1, offset:0.35 },
+      { transform:'translateY(-34px) scale(1)', opacity:0 }
+    ], { duration: 620, easing:'ease-out' });
+  }
+
+  function bumpInfiniteCounter(newVal){
+    const el = document.getElementById('infiniteCounter');
+    el.textContent = newVal;
+    el.classList.remove('pop');
+    void el.offsetWidth;
+    el.classList.add('pop');
+  }
+
+  function showInfiniteRoundSummary(quadCount, onDone){
+    const overlay = document.getElementById('infiniteOverlay');
+    const titleEl = document.getElementById('infiniteTitle');
+    const captionEl = document.getElementById('infiniteCaption');
+    const counterEl = document.getElementById('infiniteCounter');
+
+    titleEl.textContent = '🎉 ¡Giga-Tateti ganado!';
+    let running = 0;
+    counterEl.textContent = '0';
+    captionEl.textContent = `Cuadrantes ganados: ${quadCount}`;
+    overlay.classList.add('show');
+
+    const STEP_DELAY = 380;
+    let step = 0;
+
+    function nextStep(){
+      if(step < quadCount){
+        step++;
+        running += 10;
+        popInfiniteBonus('+10');
+        bumpInfiniteCounter(running);
+        setTimeout(nextStep, STEP_DELAY);
+      } else if(step === quadCount){
+        step++;
+        running += 50;
+        captionEl.textContent = 'Bonus por ganar el Giga-Tateti';
+        popInfiniteBonus('+50');
+        bumpInfiniteCounter(running);
+        setTimeout(nextStep, STEP_DELAY + 300);
+      } else {
+        infiniteScore += running;
+        updateInfiniteScoreUI();
+        captionEl.innerHTML = `Puntaje total: <strong>${infiniteScore}</strong>`;
+        setTimeout(() => {
+          overlay.classList.remove('show');
+          onDone();
+        }, 900);
+      }
+    }
+    setTimeout(nextStep, 350);
+  }
+
+  function zoomOutTransition(cb){
+    const wrap = document.querySelector('.mega-wrap');
+    const shrink = wrap.animate(
+      [{ transform:'scale(1)', opacity:1 }, { transform:'scale(0.15)', opacity:0.15 }],
+      { duration: 420, easing:'cubic-bezier(.4,0,.6,1)', fill:'forwards' }
+    );
+    shrink.onfinish = () => {
+      shrink.cancel(); // release the forwards-filled shrink before growing back, or it stays on top
+      cb();
+      const grow = wrap.animate(
+        [{ transform:'scale(0.15)', opacity:0.2 }, { transform:'scale(1)', opacity:1 }],
+        { duration: 480, easing:'cubic-bezier(.2,.8,.3,1.2)' }
+      );
+      grow.onfinish = () => grow.cancel();
+    };
+  }
+
+  function runInfiniteRoundWinSequence(){
+    const quadCount = roundQuadrantWinOrder.length;
+    const lastIndex = quadCount > 0 ? roundQuadrantWinOrder[quadCount - 1].index : null;
+    showInfiniteRoundSummary(quadCount, () => {
+      zoomOutTransition(() => beginInfiniteRound(lastIndex));
+    });
+  }
+
+  function endInfiniteRun(finalWinner){
+    const overlay = document.getElementById('infiniteOverlay');
+    const titleEl = document.getElementById('infiniteTitle');
+    const captionEl = document.getElementById('infiniteCaption');
+    const counterEl = document.getElementById('infiniteCounter');
+    document.getElementById('infinitePopup').style.opacity = 0;
+    titleEl.textContent = finalWinner === 'D' ? '🤝 Empate — se cortó la racha' : '💥 Perdiste el Giga-Tateti';
+    counterEl.textContent = infiniteScore;
+    captionEl.innerHTML = `Puntaje final: <strong>${infiniteScore}</strong>`;
+    overlay.classList.add('show');
+    document.getElementById('infiniteActions').style.display = 'flex';
+  }
+
+  function restartInfiniteRun(){
+    document.getElementById('infiniteOverlay').classList.remove('show');
+    document.getElementById('infiniteActions').style.display = 'none';
+    infiniteScore = 0;
+    presetQuadrant = null;
+    updateInfiniteScoreUI();
+    newRound();
+  }
+
+  function exitInfiniteToHome(){
+    document.getElementById('infiniteOverlay').classList.remove('show');
+    document.getElementById('infiniteActions').style.display = 'none';
+    goHome();
+  }
+
+  // ---------- online multiplayer ----------
+
+  const ROOM_CODE_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; // no 0/O/1/I/L, hard to confuse
+
+  function genRoomCode(){
+    let out = '';
+    for(let i=0;i<9;i++) out += ROOM_CODE_CHARS[Math.floor(Math.random()*ROOM_CODE_CHARS.length)];
+    return out;
+  }
+  function formatRoomCode(raw){
+    return (raw || '').match(/.{1,3}/g)?.join('-') || '';
+  }
+  function normalizeRoomCode(input){
+    return (input || '').replace(/[^A-Za-z0-9]/g,'').toUpperCase();
+  }
+  function genClientId(){
+    if(window.crypto && crypto.randomUUID) return crypto.randomUUID();
+    return 'c-' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+  }
+
+  function loadSupabaseLib(){
+    if(supabaseLibPromise) return supabaseLibPromise;
+    supabaseLibPromise = new Promise((resolve, reject) => {
+      if(window.supabase && window.supabase.createClient){ resolve(window.supabase); return; }
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
+      s.onload = () => {
+        if(window.supabase && window.supabase.createClient) resolve(window.supabase);
+        else reject(new Error('No se pudo cargar la librería de conexión.'));
+      };
+      s.onerror = () => reject(new Error('No se pudo cargar la librería de conexión.'));
+      document.head.appendChild(s);
+    });
+    return supabaseLibPromise;
+  }
+
+  function withTimeout(promise, ms, msg){
+    return Promise.race([
+      promise,
+      new Promise((_, reject) => setTimeout(() => reject(new Error(msg || 'La operación tardó demasiado.')), ms))
+    ]);
+  }
+
+  function describeOnlineError(err){
+    const raw = (err && err.message) ? err.message : String(err || 'Error desconocido.');
+    return `${raw} Si estás viendo esto en la vista previa de Claude, el modo online no funciona ahí por seguridad del navegador — abrí el archivo HTML descargado o el ejecutable de Windows.`;
+  }
+
+  async function ensureSupabase(){
+    if(supabaseClient) return supabaseClient;
+    const lib = await withTimeout(loadSupabaseLib(), 7000, 'No se pudo cargar la librería de conexión.');
+    supabaseClient = lib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    return supabaseClient;
+  }
+
+  // ---- lobby UI state machine ----
+
+  function hideAllLobbyPanels(){
+    ['lobbyChoice','lobbyJoinForm','lobbySpinner','lobbyWaiting','lobbyError'].forEach(id => {
+      document.getElementById(id).style.display = 'none';
+    });
+  }
+  function showLobbyChoice(){
+    hideAllLobbyPanels();
+    document.getElementById('lobbyChoice').style.display = 'flex';
+  }
+  function showLobbyJoinForm(){
+    hideAllLobbyPanels();
+    document.getElementById('lobbyJoinForm').style.display = 'flex';
+    const input = document.getElementById('joinCodeInput');
+    if(input){ input.value = ''; setTimeout(() => input.focus(), 50); }
+  }
+  function showLobbySpinner(text){
+    hideAllLobbyPanels();
+    document.getElementById('lobbySpinnerText').textContent = text || 'Conectando…';
+    document.getElementById('lobbySpinner').style.display = 'flex';
+  }
+  function showLobbyWaiting(code){
+    hideAllLobbyPanels();
+    document.getElementById('roomCodeDisplay').textContent = formatRoomCode(code);
+    document.getElementById('lobbyWaiting').style.display = 'flex';
+  }
+  function showLobbyError(msg){
+    hideAllLobbyPanels();
+    document.getElementById('lobbyErrorText').textContent = msg;
+    document.getElementById('lobbyError').style.display = 'flex';
+  }
+  function openOnlineLobby(){
+    document.getElementById('startMenu').style.display = 'none';
+    document.getElementById('startDiff').style.display = 'none';
+    document.getElementById('onlineLobby').style.display = 'flex';
+    showLobbyChoice();
+  }
+
+  function copyRoomCode(){
+    const display = formatRoomCode(onlineRoomCode || '');
+    const btn = document.getElementById('copyCodeBtn');
+    const done = (ok) => {
+      if(!btn) return;
+      btn.textContent = ok ? '✅ ¡Copiado!' : '⚠️ No se pudo copiar';
+      setTimeout(() => { btn.textContent = '📋 Copiar código'; }, 1600);
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(display).then(() => done(true)).catch(() => done(false));
+    } else {
+      done(false);
+    }
+  }
+
+  // ---- room lifecycle ----
+
+  function handleCreateRoomClick(){ createRoom(); }
+  function handleJoinRoomClick(){
+    const input = document.getElementById('joinCodeInput');
+    joinRoom(input ? input.value : '');
+  }
+
+  async function createRoom(){
+    showLobbySpinner('Creando sala…');
+    try{
+      const sb = await ensureSupabase();
+      onlineClientId = onlineClientId || genClientId();
+      const code = genRoomCode();
+      const { error } = await withTimeout(
+        sb.from('tateti_rooms').insert({ code, state: { lastMover: onlineClientId }, player_x: onlineClientId }),
+        8000, 'No se pudo crear la sala.'
+      );
+      if(error) throw error;
+      onlineRoomCode = code;
+      onlineMyMark = 'X';
+      onlinePhase = 'waiting';
+      onlineMode = true;
+      subscribeRoom(code);
+      showLobbyWaiting(code);
+    } catch(err){
+      showLobbyError(describeOnlineError(err));
+    }
+  }
+
+  async function joinRoom(rawCode){
+    const code = normalizeRoomCode(rawCode);
+    if(code.length !== 9){
+      showLobbyError('El código debe tener 9 caracteres (formato ABC-DEF-GHJ).');
+      return;
+    }
+    showLobbySpinner('Buscando la sala…');
+    try{
+      const sb = await ensureSupabase();
+      onlineClientId = onlineClientId || genClientId();
+
+      const { data, error } = await withTimeout(
+        sb.from('tateti_rooms').select('*').eq('code', code).maybeSingle(),
+        8000, 'No se pudo buscar la sala.'
+      );
+      if(error) throw error;
+      if(!data){ showLobbyError('No existe ninguna sala con ese código.'); return; }
+      if(data.player_x === onlineClientId){ showLobbyError('No podés unirte a tu propia sala.'); return; }
+      if(data.player_o && data.player_o !== onlineClientId){ showLobbyError('Esa sala ya está llena.'); return; }
+
+      const { error: updErr } = await withTimeout(
+        sb.from('tateti_rooms').update({ player_o: onlineClientId, updated_at: new Date().toISOString() }).eq('code', code),
+        8000, 'No se pudo unir a la sala.'
+      );
+      if(updErr) throw updErr;
+
+      onlineRoomCode = code;
+      onlineMyMark = 'O';
+      onlinePhase = 'playing';
+      onlineMode = true;
+      showLobbySpinner('Uniéndote a la partida…');
+      subscribeRoom(code);
+
+      // fallback: in case X already pushed the initial state before our subscription was live
+      const { data: fresh } = await sb.from('tateti_rooms').select('*').eq('code', code).maybeSingle();
+      if(fresh && fresh.state && fresh.state.boards){
+        applyStateSnapshotDirect(fresh.state);
+        showOnlineGameArea();
+      }
+    } catch(err){
+      showLobbyError(describeOnlineError(err));
+    }
+  }
+
+  function subscribeRoom(code){
+    if(onlineChannel){
+      try{ onlineChannel.unsubscribe(); } catch(e){}
+      onlineChannel = null;
+    }
+    onlineChannel = supabaseClient
+      .channel('room-' + code)
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'tateti_rooms', filter: 'code=eq.' + code }, (payload) => {
+        handleRoomUpdate(payload.new);
+      })
+      .subscribe();
+  }
+
+  function handleRoomUpdate(row){
+    const newState = row.state || {};
+
+    // Opponent-joined transition must be checked before the lastMover echo-skip below,
+    // since the joiner's UPDATE (setting player_o) never touches state.lastMover.
+    if(onlineMyMark === 'X' && onlinePhase === 'waiting' && row.player_o){
+      onlinePhase = 'playing';
+      beginOnlineRound();
+      return;
+    }
+
+    if(newState.lastMover === onlineClientId) return; // our own echo, already applied locally
+    if(!newState.boards) return; // not an initialized game state yet
+
+    applyStateSnapshotDirect(newState);
+    showOnlineGameArea();
+  }
+
+  function beginOnlineRound(){
+    initState('X'); // room creator always starts the very first round; no coin flip online
+    buildMegaBoard();
+    winLineEl.classList.remove('draw-on');
+    winLineEl.setAttribute('x1',0); winLineEl.setAttribute('y1',0);
+    winLineEl.setAttribute('x2',0); winLineEl.setAttribute('y2',0);
+    updateStatus();
+    refreshHighlights();
+    quadrantEls.forEach(q => q.classList.add('active'));
+    showOnlineGameArea();
+    pushOnlineState();
+  }
+
+  function startNewOnlineRound(){
+    initState(onlineMyMark); // whoever taps "Nueva Partida" starts this round
+    buildMegaBoard();
+    winLineEl.classList.remove('draw-on');
+    winLineEl.setAttribute('x1',0); winLineEl.setAttribute('y1',0);
+    winLineEl.setAttribute('x2',0); winLineEl.setAttribute('y2',0);
+    updateStatus();
+    refreshHighlights();
+    quadrantEls.forEach(q => q.classList.add('active'));
+    pushOnlineState();
+  }
+
+  function buildStateSnapshot(){
+    return { lastMover: onlineClientId, boards, subWinner, activeBoard, current, gameOver, winner, winLineIdx, scores };
+  }
+
+  function applyStateSnapshotDirect(state){
+    boards = state.boards;
+    subWinner = state.subWinner;
+    activeBoard = state.activeBoard;
+    current = state.current;
+    gameOver = state.gameOver;
+    winner = state.winner;
+    winLineIdx = state.winLineIdx;
+    scores = state.scores || scores;
+
+    buildMegaBoard();
+    for(let b=0;b<9;b++){
+      for(let c=0;c<9;c++){
+        if(boards[b][c]){
+          const cellEl = miniCellEls[b][c];
+          cellEl.classList.add('filled');
+          cellEl.innerHTML = markSVG(boards[b][c]);
+        }
+      }
+      if(subWinner[b]) applyQuadrantMark(b);
+    }
+    scoreXEl.textContent = scores.X;
+    scoreOEl.textContent = scores.O;
+    scoreDEl.textContent = scores.D;
+
+    winLineEl.classList.remove('draw-on');
+    if(gameOver){
+      quadrantEls.forEach(q => q.classList.remove('active'));
+      hintEl.textContent = '';
+      if(winner === 'D'){
+        statusEl.innerHTML = '<span>🤝 ¡Empate general!</span>';
+      } else {
+        drawMetaWinLine(winLineIdx);
+        winLineIdx.forEach(qi => quadrantEls[qi].classList.add('win-quad'));
+        const label = winner === onlineMyMark ? '¡Ganaste vos! 🎉' : 'Ganó tu rival';
+        statusEl.innerHTML = `<span>${label}</span>`;
+        launchConfetti(winner);
+      }
+    } else {
+      updateStatus();
+      refreshHighlights();
+    }
+  }
+
+  async function pushOnlineState(){
+    if(!onlineRoomCode || !supabaseClient) return;
+    const snapshot = buildStateSnapshot();
+    try{
+      const { error } = await supabaseClient.from('tateti_rooms')
+        .update({ state: snapshot, updated_at: new Date().toISOString() })
+        .eq('code', onlineRoomCode);
+      if(error) throw error;
+    } catch(err){
+      showStartToast('⚠️ No se pudo sincronizar con tu rival. Revisá tu conexión.');
+    }
+  }
+
+  function showOnlineGameArea(){
+    document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('gameStage').style.display = 'flex';
+    updateModeIndicator();
+    updateRoomChip();
+  }
+
+  function updateRoomChip(){
+    const chip = document.getElementById('roomChip');
+    if(!chip) return;
+    if(!onlineMode || !onlineRoomCode){ chip.style.display = 'none'; return; }
+    chip.style.display = 'flex';
+    chip.textContent = `Sala ${formatRoomCode(onlineRoomCode)} · Sos ${onlineMyMark === 'X' ? '✕' : '○'}`;
+  }
+
+  function cancelOnlineWaiting(){
+    leaveOnlineRoom();
+    showLobbyChoice();
+  }
+
+  function leaveOnlineRoom(){
+    if(onlineChannel){
+      try{ onlineChannel.unsubscribe(); } catch(e){}
+      onlineChannel = null;
+    }
+    onlineMode = false;
+    onlineRoomCode = null;
+    onlineMyMark = null;
+    onlinePhase = null;
+    updateRoomChip();
+  }
+
+  // ---------- core rules (shared by UI and AI search) ----------
+
+  function evalSubBoardWinner(cells){
+    for(const [a,b,c] of WIN_LINES){
+      if(cells[a] && cells[a] === cells[b] && cells[a] === cells[c]) return cells[a];
+    }
+    return null;
+  }
+
+  function evalMetaWinner(sw){
+    for(const line of WIN_LINES){
+      const [a,b,c] = line;
+      const va = sw[a];
+      if(va && (va === 'X' || va === 'O') && va === sw[b] && va === sw[c]) return { winner: va, line };
+    }
+    return null;
+  }
+
+  function legalMoves(){
+    let candidateBoards;
+    if(activeBoard !== null && !subWinner[activeBoard]){
+      candidateBoards = [activeBoard];
+    } else {
+      candidateBoards = [];
+      for(let i=0;i<9;i++) if(!subWinner[i]) candidateBoards.push(i);
+    }
+    const moves = [];
+    for(const b of candidateBoards){
+      for(let c=0;c<9;c++){
+        if(!boards[b][c]) moves.push([b,c]);
+      }
+    }
+    return moves;
+  }
+
+  // mutate + undo pattern for fast AI search
+  function makeMove(subIdx, cellIdx, player){
+    const rec = {
+      subIdx, cellIdx,
+      prevCell: boards[subIdx][cellIdx],
+      prevSubWinner: subWinner[subIdx],
+      prevActiveBoard: activeBoard,
+      prevCurrent: current,
+      prevGameOver: gameOver,
+      prevWinner: winner,
+      prevWinLineIdx: winLineIdx,
+      subChanged: false
+    };
+
+    boards[subIdx][cellIdx] = player;
+
+    if(!rec.prevSubWinner){
+      const w = evalSubBoardWinner(boards[subIdx]);
+      if(w){
+        subWinner[subIdx] = w;
+        rec.subChanged = true;
+      } else if(boards[subIdx].every(c => c)){
+        subWinner[subIdx] = 'D';
+        rec.subChanged = true;
+      }
+    }
+
+    let newGameOver = false, newWinner = null, newWinLine = null;
+    if(rec.subChanged){
+      const metaResult = evalMetaWinner(subWinner);
+      if(metaResult){
+        newGameOver = true;
+        newWinner = metaResult.winner;
+        newWinLine = metaResult.line;
+      } else if(subWinner.every(v => v)){
+        newGameOver = true;
+        newWinner = 'D';
+      }
+    }
+
+    let nextActive = activeBoard;
+    if(!newGameOver){
+      nextActive = subWinner[cellIdx] ? null : cellIdx;
+    }
+
+    gameOver = newGameOver;
+    winner = newWinner;
+    winLineIdx = newWinLine;
+    activeBoard = newGameOver ? activeBoard : nextActive;
+    current = newGameOver ? current : (player === 'X' ? 'O' : 'X');
+
+    return rec;
+  }
+
+  function undoMove(rec){
+    boards[rec.subIdx][rec.cellIdx] = rec.prevCell;
+    subWinner[rec.subIdx] = rec.prevSubWinner;
+    activeBoard = rec.prevActiveBoard;
+    current = rec.prevCurrent;
+    gameOver = rec.prevGameOver;
+    winner = rec.prevWinner;
+    winLineIdx = rec.prevWinLineIdx;
+  }
+
+  // ---------- rendering ----------
+
+  function applyQuadrantMark(subIdx){
+    const quad = quadrantEls[subIdx];
+    const result = subWinner[subIdx];
+    quad.classList.add('decided', 'decided-' + result.toLowerCase());
+    const markEl = quad.querySelector('.quad-mark');
+    markEl.innerHTML = result === 'D' ? '<span class="draw-mark">–</span>' : markSVG(result);
+    markEl.classList.add('show');
+  }
+
+  function refreshHighlights(){
+    if(gameOver){
+      quadrantEls.forEach(q => q.classList.remove('active'));
+      return;
+    }
+    const legal = legalMoves();
+    const legalBoards = new Set(legal.map(([b]) => b));
+    quadrantEls.forEach((quad, i) => quad.classList.toggle('active', legalBoards.has(i)));
+  }
+
+  function updateStatus(){
+    if(gameOver) return;
+    if(onlineMode){
+      const mark = current === 'X' ? '✕' : '○';
+      const cls = current === 'X' ? 'x' : 'o';
+      if(current === onlineMyMark){
+        statusEl.innerHTML = `<span>Te toca a vos</span><span class="who ${cls}">${mark}</span>`;
+        hintEl.textContent = activeBoard === null
+          ? 'Podés jugar en cualquier cuadrante libre'
+          : 'Jugá dentro del cuadrante resaltado';
+      } else {
+        statusEl.innerHTML = `<span>Esperando a tu rival</span><span class="who ${cls}">${mark}</span>`;
+        hintEl.textContent = '';
+      }
+      return;
+    }
+    if(mode === 'ai' && current === 'O'){
+      statusEl.innerHTML = '<span>🤖 La computadora está pensando…</span>';
+      hintEl.textContent = '';
+      return;
+    }
+    const mark = current === 'X' ? '✕' : '○';
+    const cls = current === 'X' ? 'x' : 'o';
+    statusEl.innerHTML = `<span>Le toca a</span><span class="who ${cls}">${mark}</span>`;
+    hintEl.textContent = activeBoard === null
+      ? 'Podés jugar en cualquier cuadrante libre'
+      : 'Jugá dentro del cuadrante resaltado';
+  }
+
+  function renderAfterMove(subIdx, cellIdx, player, subChanged){
+    const cellEl = miniCellEls[subIdx][cellIdx];
+    cellEl.classList.add('filled');
+    cellEl.innerHTML = markSVG(player);
+
+    if(subChanged){
+      applyQuadrantMark(subIdx);
+      if(infiniteMode && subWinner[subIdx] === 'X'){
+        roundQuadrantWinOrder.push({ index: subIdx });
+      }
+    }
+
+    if(gameOver){
+      finishGame();
+    } else {
+      updateStatus();
+      refreshHighlights();
+    }
+  }
+
+  function coordsForQuadrant(i){
+    const coords = {
+      0:[50,50], 1:[150,50], 2:[250,50],
+      3:[50,150], 4:[150,150], 5:[250,150],
+      6:[50,250], 7:[150,250], 8:[250,250]
+    };
+    return coords[i];
+  }
+
+  function drawMetaWinLine(line){
+    const [a,,c] = line;
+    const [x1,y1] = coordsForQuadrant(a);
+    const [x2,y2] = coordsForQuadrant(c);
+    winLineEl.setAttribute('x1', x1);
+    winLineEl.setAttribute('y1', y1);
+    winLineEl.setAttribute('x2', x2);
+    winLineEl.setAttribute('y2', y2);
+    winLineEl.classList.remove('draw-on');
+    void winLineEl.getBoundingClientRect();
+    winLineEl.classList.add('draw-on');
+  }
+
+  function pulseBox(id){
+    const el = document.getElementById(id);
+    el.classList.remove('pulse');
+    void el.offsetWidth;
+    el.classList.add('pulse');
+  }
+
+  function finishGame(){
+    quadrantEls.forEach(q => q.classList.remove('active'));
+    hintEl.textContent = '';
+    if(winner === 'D'){
+      scores.D++;
+      scoreDEl.textContent = scores.D;
+      pulseBox('scoreDBox');
+      statusEl.innerHTML = '<span>🤝 ¡Empate general!</span>';
+    } else {
+      scores[winner]++;
+      if(winner === 'X'){ scoreXEl.textContent = scores.X; pulseBox('scoreXBox'); }
+      else { scoreOEl.textContent = scores.O; pulseBox('scoreOBox'); }
+      if(onlineMode){
+        const label = winner === onlineMyMark ? '¡Ganaste vos! 🎉' : 'Ganó tu rival';
+        statusEl.innerHTML = `<span>${label}</span>`;
+      } else {
+        const winnerLabel = mode === 'ai' && winner === 'O' ? '🤖 Computadora' : `Jugador ${winner}`;
+        statusEl.innerHTML = `<span>🎉 ¡Ganó ${winnerLabel}!</span>`;
+      }
+      drawMetaWinLine(winLineIdx);
+      winLineIdx.forEach(qi => quadrantEls[qi].classList.add('win-quad'));
+      launchConfetti(winner);
+    }
+
+    if(infiniteMode){
+      if(winner === 'X'){
+        setTimeout(runInfiniteRoundWinSequence, 1000);
+      } else {
+        setTimeout(() => endInfiniteRun(winner), 1000);
+      }
+    }
+  }
+
+  // ---------- interaction ----------
+
+  function handleCellClick(subIdx, cellIdx){
+    if(gameOver) return;
+    if(onlineMode){
+      if(current !== onlineMyMark) return;
+    } else if(mode === 'ai' && current === 'O') return;
+    if(subWinner[subIdx]) return;
+    if(boards[subIdx][cellIdx]) return;
+    if(activeBoard !== null && activeBoard !== subIdx) return;
+
+    const player = current;
+    const rec = makeMove(subIdx, cellIdx, player);
+    renderAfterMove(subIdx, cellIdx, player, rec.subChanged);
+
+    if(onlineMode){
+      pushOnlineState();
+      return;
+    }
+
+    if(!gameOver && mode === 'ai' && current === 'O'){
+      megaBoardEl.classList.add('thinking');
+      statusEl.innerHTML = '<span>🤖 La computadora está pensando…</span>';
+      setTimeout(runAIMove, 320 + Math.random()*260);
+    }
+  }
+
+  function runAIMove(){
+    megaBoardEl.classList.remove('thinking');
+    if(gameOver) return;
+    const move = bestMoveAI();
+    if(!move) return;
+    const [b,c] = move;
+    const player = current;
+    const rec = makeMove(b,c,player);
+    renderAfterMove(b,c,player,rec.subChanged);
+  }
+
+  function beginRound(startMark){
+    initState(startMark);
+    buildMegaBoard();
+    if(infiniteMode && presetQuadrant){
+      applyQuadrantMark(presetQuadrant.index);
+    }
+    winLineEl.classList.remove('draw-on');
+    winLineEl.setAttribute('x1',0); winLineEl.setAttribute('y1',0);
+    winLineEl.setAttribute('x2',0); winLineEl.setAttribute('y2',0);
+    updateStatus();
+    refreshHighlights();
+    quadrantEls.forEach(q => q.classList.add('active'));
+
+    if(mode === 'ai' && current === 'O'){
+      megaBoardEl.classList.add('thinking');
+      statusEl.innerHTML = '<span>🤖 La computadora está pensando…</span>';
+      setTimeout(runAIMove, 500 + Math.random()*300);
+    }
+  }
+
+  function newRound(){
+    if(onlineMode){ startNewOnlineRound(); return; }
+    flipCoin(beginRound);
+  }
+
+  // ---------- coin flip ----------
+
+  let spinAnim = null, hopAnim = null, shadowAnim = null;
+
+  function flipCoin(onDone){
+    const coinEl = document.getElementById('coin');
+    const hopEl = document.getElementById('coinHop');
+    const shadowEl = document.getElementById('coinShadow');
+    const resultEl = document.getElementById('coinResult');
+    const captionEl = document.getElementById('coinCaption');
+    const overlay = document.getElementById('coinOverlay');
+
+    if(spinAnim) spinAnim.cancel();
+    if(hopAnim) hopAnim.cancel();
+    if(shadowAnim) shadowAnim.cancel();
+
+    resultEl.textContent = '';
+    resultEl.classList.remove('show');
+    captionEl.style.opacity = 1;
+    overlay.classList.add('show');
+
+    const startsWithX = Math.random() < 0.5;
+    const extraSpins = 4 + Math.floor(Math.random()*3); // 4-6 full turns
+    const finalDeg = extraSpins*360 + (startsWithX ? 0 : 180);
+    const duration = 1700;
+
+    spinAnim = coinEl.animate(
+      [{ transform:'rotateY(0deg)' }, { transform:`rotateY(${finalDeg}deg)` }],
+      { duration, easing:'cubic-bezier(.16,.72,.28,1)', fill:'forwards' }
+    );
+    hopAnim = hopEl.animate(
+      [
+        { transform:'translateY(0)', offset:0 },
+        { transform:'translateY(-95px)', offset:0.46 },
+        { transform:'translateY(0)', offset:1 }
+      ],
+      { duration, easing:'cubic-bezier(.33,0,.2,1)', fill:'forwards' }
+    );
+    shadowAnim = shadowEl.animate(
+      [
+        { transform:'scale(1)', opacity:0.55, offset:0 },
+        { transform:'scale(0.4)', opacity:0.18, offset:0.46 },
+        { transform:'scale(1)', opacity:0.55, offset:1 }
+      ],
+      { duration, easing:'cubic-bezier(.33,0,.2,1)', fill:'forwards' }
+    );
+
+    spinAnim.onfinish = () => {
+      const mark = startsWithX ? 'X' : 'O';
+      const startsLabel = mark === 'X' ? 'Jugador X' : (mode === 'ai' ? '🤖 Computadora' : 'Jugador O');
+      captionEl.style.opacity = 0;
+      resultEl.innerHTML = `<span class="who ${mark === 'X' ? 'x' : 'o'}">${mark === 'X' ? '✕' : '○'}</span> ¡Empieza ${startsLabel}!`;
+      resultEl.classList.add('show');
+      launchCoinSparkle();
+      setTimeout(() => {
+        overlay.classList.remove('show');
+        onDone(mark);
+      }, 1150);
+    };
+  }
+
+  function launchCoinSparkle(){
+    const stage = document.querySelector('.coin-stage');
+    const rect = stage.getBoundingClientRect();
+    const cx = rect.left + rect.width/2;
+    const cy = rect.top + rect.height - 100;
+    for(let i=0;i<20;i++){
+      const el = document.createElement('div');
+      el.className = 'coin-spark';
+      document.body.appendChild(el);
+      const angle = Math.random()*Math.PI*2;
+      const dist = 55 + Math.random()*75;
+      const dx = Math.cos(angle)*dist;
+      const dy = Math.sin(angle)*dist;
+      el.style.left = cx + 'px';
+      el.style.top = cy + 'px';
+      el.animate([
+        { transform:'translate(-50%,-50%) scale(1)', opacity:1 },
+        { transform:`translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(0.2)`, opacity:0 }
+      ], { duration: 650+Math.random()*300, easing:'ease-out', fill:'forwards' });
+      setTimeout(() => el.remove(), 1000);
+    }
+  }
+
+  function resetScore(){
+    scores = { X:0, O:0, D:0 };
+    scoreXEl.textContent = 0;
+    scoreOEl.textContent = 0;
+    scoreDEl.textContent = 0;
+    if(infiniteMode){
+      infiniteScore = 0;
+      presetQuadrant = null;
+      updateInfiniteScoreUI();
+    }
+    newRound();
+  }
+
+  // ---------- AI: depth-limited minimax with alpha-beta ----------
+
+  function lineScoreArr(arr, player){
+    let total = 0;
+    for(const [a,b,c] of WIN_LINES){
+      const vals = [arr[a], arr[b], arr[c]];
+      if(vals.some(v => v && v !== player)) continue; // blocked by opponent or a drawn board
+      const count = vals.filter(v => v === player).length;
+      if(count === 2) total += 5;
+      else if(count === 1) total += 1;
+    }
+    return total;
+  }
+
+  function heuristic(){
+    let score = 0;
+    score += lineScoreArr(subWinner, 'O') * 30;
+    score -= lineScoreArr(subWinner, 'X') * 30;
+    for(let i=0;i<9;i++){
+      if(!subWinner[i]){
+        score += lineScoreArr(boards[i], 'O');
+        score -= lineScoreArr(boards[i], 'X');
+      } else if(subWinner[i] === 'O'){
+        score += 4;
+      } else if(subWinner[i] === 'X'){
+        score -= 4;
+      }
+    }
+    return score;
+  }
+
+  function minimax(depth, alpha, beta, maximizing){
+    if(gameOver){
+      if(winner === 'O') return 100000 + depth;
+      if(winner === 'X') return -100000 - depth;
+      return 0;
+    }
+    if(depth === 0) return heuristic();
+
+    const moves = legalMoves();
+    if(maximizing){
+      let best = -Infinity;
+      for(const [b,c] of moves){
+        const rec = makeMove(b,c,'O');
+        const val = minimax(depth-1, alpha, beta, false);
+        undoMove(rec);
+        if(val > best) best = val;
+        if(best > alpha) alpha = best;
+        if(alpha >= beta) break;
+      }
+      return best;
+    } else {
+      let best = Infinity;
+      for(const [b,c] of moves){
+        const rec = makeMove(b,c,'X');
+        const val = minimax(depth-1, alpha, beta, true);
+        undoMove(rec);
+        if(val < best) best = val;
+        if(best < beta) beta = best;
+        if(alpha >= beta) break;
+      }
+      return best;
+    }
+  }
+
+  function pickDepth(moveCount){
+    if(moveCount <= 6) return 6;
+    if(moveCount <= 12) return 5;
+    if(moveCount <= 24) return 4;
+    return 3;
+  }
+
+  function bestMoveAI(){
+    const moves = legalMoves();
+    if(moves.length === 0) return null;
+
+    const cfg = DIFFICULTY_CONFIG[difficulty] || DIFFICULTY_CONFIG.medium;
+    if(Math.random() < cfg.blunderChance){
+      return moves[Math.floor(Math.random()*moves.length)];
+    }
+
+    const depth = cfg.maxDepth || pickDepth(moves.length);
+    let alpha = -Infinity, beta = Infinity;
+    let bestScore = -Infinity;
+    let bestMoves = [];
+    for(const [b,c] of moves){
+      const rec = makeMove(b,c,'O');
+      const val = minimax(depth-1, alpha, beta, false);
+      undoMove(rec);
+      if(val > bestScore){ bestScore = val; bestMoves = [[b,c]]; }
+      else if(val === bestScore){ bestMoves.push([b,c]); }
+      if(val > alpha) alpha = val;
+    }
+    return bestMoves[Math.floor(Math.random()*bestMoves.length)];
+  }
+
+  // ---------- confetti ----------
+
+  function launchConfetti(w){
+    const colors = w === 'X'
+      ? ['#7c5cff','#a78bfa','#42e8c4']
+      : ['#ff5c9a','#ff8fb8','#ffd166'];
+    for(let i=0;i<26;i++){
+      const el = document.createElement('div');
+      el.className = 'confetti';
+      el.style.left = Math.random()*100 + 'vw';
+      el.style.background = colors[Math.floor(Math.random()*colors.length)];
+      el.style.animationDuration = (2 + Math.random()*1.5) + 's';
+      el.style.opacity = 0.7 + Math.random()*0.3;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 3600);
+    }
+  }
+
+</script>
+</body>
+</html>
