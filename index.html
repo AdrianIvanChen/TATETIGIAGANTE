@@ -385,6 +385,17 @@
   @keyframes drawline{to{stroke-dashoffset:0;}}
 
   .controls{display:flex;gap:10px;}
+  .online-restart-note{
+    font-size:0.76rem;
+    font-weight:700;
+    color:#ffb4b4;
+    background:rgba(255,92,110,0.12);
+    border:1px solid rgba(255,92,110,0.35);
+    border-radius:12px;
+    padding:8px 12px;
+    text-align:center;
+  }
+  .btn:disabled{opacity:0.45; cursor:not-allowed; filter:grayscale(0.3);}
   .btn{
     flex:1;
     border:none;
@@ -689,6 +700,61 @@
     border-radius:999px;
     padding:6px 14px;
   }
+  .infinite-record-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:3px;
+    font-size:0.68rem;
+    font-weight:800;
+    color:#fff;
+    background:linear-gradient(90deg, var(--x-glow), var(--o-glow));
+    border-radius:999px;
+    padding:2px 9px;
+    margin-left:2px;
+    animation:recordPulse 1.1s ease-in-out infinite;
+  }
+  @keyframes recordPulse{
+    0%,100%{ transform:scale(1); }
+    50%{ transform:scale(1.09); }
+  }
+
+  .confirm-overlay{
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:rgba(8,6,20,0.78);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transition:opacity 0.25s ease, visibility 0.25s ease;
+    z-index:140;
+  }
+  .confirm-overlay.show{opacity:1; visibility:visible; pointer-events:auto;}
+  .confirm-card{
+    width:100%;
+    max-width:320px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    text-align:center;
+    background:linear-gradient(160deg, rgba(26,20,64,0.97), rgba(43,16,85,0.97));
+    border:1px solid var(--card-border);
+    border-radius:var(--radius);
+    padding:22px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+  }
+  .confirm-message{
+    font-size:0.92rem;
+    font-weight:600;
+    color:var(--ink);
+    line-height:1.4;
+  }
+  .confirm-actions{display:flex; gap:10px;}
 
   .infinite-overlay{
     position:fixed;
@@ -1180,7 +1246,7 @@
   <div class="card">
 
     <div class="mode-indicator" id="modeIndicator"></div>
-    <div class="infinite-score" id="infiniteScoreBadge" style="display:none;">⭐ <span id="infiniteScoreValue">0</span> puntos</div>
+    <div class="infinite-score" id="infiniteScoreBadge" style="display:none;">⭐ <span id="infiniteScoreValue">0</span> puntos<span class="infinite-record-pill" id="infiniteRecordPill" style="display:none;">🏆 ¡Récord!</span></div>
     <div class="room-chip" id="roomChip" style="display:none;"></div>
 
     <div class="scoreboard">
@@ -1208,9 +1274,10 @@
       </svg>
     </div>
 
+    <div class="online-restart-note" id="onlineRestartNote" style="display:none;"></div>
     <div class="controls">
-      <button class="btn btn-ghost btn-icon" onclick="goHome()" title="Menú principal">🏠</button>
-      <button class="btn btn-primary" onclick="newRound()">↻ Nueva Partida</button>
+      <button class="btn btn-ghost btn-icon" onclick="confirmGoHome()" title="Menú principal">🏠</button>
+      <button class="btn btn-primary" id="newRoundBtn" onclick="newRound()">↻ Nueva Partida</button>
       <button class="btn btn-ghost" onclick="resetScore()">Reiniciar Marcador</button>
     </div>
 
@@ -1243,6 +1310,16 @@
     <div class="infinite-actions" id="infiniteActions" style="display:none;">
       <button class="btn btn-primary" onclick="restartInfiniteRun()">↻ Jugar de nuevo</button>
       <button class="btn btn-ghost" onclick="exitInfiniteToHome()">🏠 Menú</button>
+    </div>
+  </div>
+</div>
+
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-card">
+    <div class="confirm-message" id="confirmMessage"></div>
+    <div class="confirm-actions">
+      <button class="btn btn-ghost" id="confirmCancelBtn" onclick="resolveConfirm(false)">Cancelar</button>
+      <button class="btn btn-primary" id="confirmOkBtn" onclick="resolveConfirm(true)">Sí, volver</button>
     </div>
   </div>
 </div>
@@ -1430,6 +1507,11 @@
   let onlineOpponent = { name: null, userId: null }; // learned from the first snapshot the rival pushes
   let matchResultRecorded = false; // guards against double-recording stats/history for one finished match
   let onlineForfeitInProgress = false; // true while leaveOnlineRoom() is pushing a forfeit-win state
+  let opponentPresent = false; // live Realtime Presence: is the rival's client currently connected to the room?
+  let presenceReady = false;   // true once we've received at least one presence sync for this room
+
+  // ---------- infinite mode: personal-record tracking ----------
+  let infiniteBestForDiff = 0; // this user's saved best score for the difficulty currently being played (0 if none/guest)
 
   // ---------- profile / auth state ----------
   let authInitPromise = null;
@@ -1596,6 +1678,36 @@
     showStartMenu();
   }
 
+  // ---------- confirm dialog (generic) ----------
+
+  let confirmResolve = null;
+
+  function showConfirm(message, okLabel){
+    return new Promise(resolve => {
+      confirmResolve = resolve;
+      document.getElementById('confirmMessage').textContent = message;
+      document.getElementById('confirmOkBtn').textContent = okLabel || 'Sí, volver';
+      document.getElementById('confirmOverlay').classList.add('show');
+    });
+  }
+
+  function resolveConfirm(result){
+    document.getElementById('confirmOverlay').classList.remove('show');
+    const resolve = confirmResolve;
+    confirmResolve = null;
+    if(resolve) resolve(result);
+  }
+
+  async function confirmGoHome(){
+    // No active round to lose — go straight home without nagging.
+    if(gameOver){ goHome(); return; }
+    const msg = onlineMode
+      ? '¿Seguro que querés volver al menú principal? Vas a abandonar la partida y tu rival gana automáticamente.'
+      : '¿Seguro que querés volver al menú principal? Vas a perder el progreso de esta partida.';
+    const ok = await showConfirm(msg, 'Sí, volver al menú');
+    if(ok) goHome();
+  }
+
   // ---------- infinite mode ----------
 
   function updateInfiniteScoreUI(){
@@ -1604,16 +1716,37 @@
     badge.style.display = infiniteMode ? 'flex' : 'none';
     const valEl = document.getElementById('infiniteScoreValue');
     if(valEl) valEl.textContent = infiniteScore;
+    const pill = document.getElementById('infiniteRecordPill');
+    if(pill){
+      const isNewRecord = infiniteMode && infiniteBestForDiff > 0 && infiniteScore > infiniteBestForDiff;
+      pill.style.display = isNewRecord ? 'inline-flex' : 'none';
+    }
+  }
+
+  async function fetchInfiniteBest(diff){
+    if(!currentUser) return 0;
+    try{
+      const sb = await ensureSupabase();
+      const { data } = await sb.from('infinite_best_scores').select('best_score').eq('user_id', currentUser.id).eq('difficulty', diff).maybeSingle();
+      return data ? data.best_score : 0;
+    } catch(err){ return 0; }
   }
 
   function startInfiniteMode(){
     infiniteMode = true;
     infiniteScore = 0;
+    infiniteBestForDiff = 0;
     presetQuadrant = null;
     document.getElementById('startScreen').style.display = 'none';
     document.getElementById('gameStage').style.display = 'flex';
     updateInfiniteScoreUI();
     setMode('ai');
+    if(currentUser){
+      fetchInfiniteBest(difficulty).then(best => {
+        infiniteBestForDiff = best;
+        updateInfiniteScoreUI();
+      });
+    }
   }
 
   function beginInfiniteRound(seedIndex){
@@ -1715,10 +1848,14 @@
     document.getElementById('infinitePopup').style.opacity = 0;
     titleEl.textContent = finalWinner === 'D' ? '🤝 Empate — se cortó la racha' : '💥 Perdiste el Giga-Tateti';
     counterEl.textContent = infiniteScore;
-    captionEl.innerHTML = `Puntaje final: <strong>${infiniteScore}</strong>`;
+    const isNewRecord = infiniteBestForDiff > 0 && infiniteScore > infiniteBestForDiff;
+    captionEl.innerHTML = isNewRecord
+      ? `Puntaje final: <strong>${infiniteScore}</strong> — 🏆 ¡Nuevo récord personal!`
+      : `Puntaje final: <strong>${infiniteScore}</strong>`;
     overlay.classList.add('show');
     document.getElementById('infiniteActions').style.display = 'flex';
 
+    if(infiniteScore > infiniteBestForDiff) infiniteBestForDiff = infiniteScore;
     if(currentUser) recordInfiniteBestScore(difficulty, infiniteScore);
   }
 
@@ -1946,12 +2083,45 @@
       try{ onlineChannel.unsubscribe(); } catch(e){}
       onlineChannel = null;
     }
+    opponentPresent = false;
+    presenceReady = false;
     onlineChannel = supabaseClient
-      .channel('room-' + code)
+      .channel('room-' + code, { config: { presence: { key: onlineClientId } } })
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'tateti_rooms', filter: 'code=eq.' + code }, (payload) => {
         handleRoomUpdate(payload.new);
       })
-      .subscribe();
+      .on('presence', { event: 'sync' }, () => {
+        // Presence lets us know, live, whether the rival's client is actually still connected —
+        // used to decide whether "Nueva Partida" can be offered after a match ends.
+        try{
+          const state = onlineChannel.presenceState();
+          opponentPresent = Object.keys(state).some(key => key !== onlineClientId);
+        } catch(e){ opponentPresent = false; }
+        presenceReady = true;
+        updateOnlinePostGameUI();
+      })
+      .subscribe((status) => {
+        if(status === 'SUBSCRIBED'){
+          try{ onlineChannel.track({ mark: onlineMyMark, at: Date.now() }); } catch(e){}
+        }
+      });
+  }
+
+  function updateOnlinePostGameUI(){
+    const btn = document.getElementById('newRoundBtn');
+    const note = document.getElementById('onlineRestartNote');
+    if(!btn || !note) return;
+    if(!onlineMode || !gameOver || !presenceReady || opponentPresent){
+      note.style.display = 'none';
+      btn.disabled = false;
+      btn.textContent = '↻ Nueva Partida';
+      return;
+    }
+    // Online, match finished, presence confirmed, and the rival's client is gone.
+    note.style.display = 'block';
+    note.textContent = '⚠️ Tu rival se desconectó de la sala — no se puede reiniciar esta partida.';
+    btn.disabled = true;
+    btn.textContent = '↻ Nueva Partida';
   }
 
   function handleRoomUpdate(row){
@@ -1983,6 +2153,7 @@
     refreshHighlights();
     quadrantEls.forEach(q => q.classList.add('active'));
     showOnlineGameArea();
+    updateOnlinePostGameUI();
     pushOnlineState();
   }
 
@@ -1996,6 +2167,7 @@
     updateStatus();
     refreshHighlights();
     quadrantEls.forEach(q => q.classList.add('active'));
+    updateOnlinePostGameUI();
     pushOnlineState();
   }
 
@@ -2064,6 +2236,7 @@
       updateStatus();
       refreshHighlights();
     }
+    updateOnlinePostGameUI();
   }
 
   async function pushOnlineState(){
@@ -2124,6 +2297,10 @@
     onlinePhase = null;
     onlineOpponent = { name: null, userId: null };
     matchResultRecorded = false;
+    opponentPresent = false;
+    presenceReady = false;
+    const note = document.getElementById('onlineRestartNote');
+    if(note) note.style.display = 'none';
     updateRoomChip();
   }
 
@@ -2895,6 +3072,7 @@
       recordOwnOnlineStat(myOnlineResult(winner));
       recordMatchHistory(winner);
     }
+    if(onlineMode) updateOnlinePostGameUI();
   }
 
   // ---------- interaction ----------
@@ -2959,6 +3137,10 @@
     if(onlineMode){
       if(!gameOver){
         showStartToast('Terminá la partida actual antes de arrancar una nueva.');
+        return;
+      }
+      if(presenceReady && !opponentPresent){
+        showStartToast('Tu rival se desconectó — no se puede reiniciar esta partida.');
         return;
       }
       startNewOnlineRound();
