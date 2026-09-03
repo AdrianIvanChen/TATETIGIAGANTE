@@ -2,7 +2,7 @@
 
 Ta-Te-Ti Gigante (Ultimate Tic-Tac-Toe): 9 tatetis chicos adentro de un tablero grande. Ganás cuando hacés línea de 3 en el tablero grande, pero cada jugada te manda a jugar a un tablero chico específico. Jugá solo contra la computadora, en modo Infinito encadenando partidas, con un amigo en el mismo dispositivo, o a distancia por internet con código de sala.
 
-🎮 **Jugá acá:** https://adrianivanchen.github.io/tateti-gigante/
+🎮 **Jugá acá:** https://adrianivanchen.github.io/TATETIGIAGANTE/
 
 ![Pantalla de inicio](screenshots/01-inicio.png)
 
