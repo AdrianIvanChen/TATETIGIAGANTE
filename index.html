@@ -2298,6 +2298,8 @@
     presetQuadrant = null;
     pendingContext = null;
     pendingVariant = null;
+    hideAllStartPanels();
+    document.getElementById('onlineLobby').style.display = 'flex';
     captureOnlineGuestName('lobbyNameCreate');
     showLobbySpinner('Creando sala…');
     try{
