@@ -2,7 +2,7 @@
 
 Ta-Te-Ti Gigante (Ultimate Tic-Tac-Toe): 9 tatetis chicos adentro de un tablero grande. Ganás cuando hacés línea de 3 en el tablero grande, pero cada jugada te manda a jugar a un tablero chico específico. Elegí entre 4 variantes de juego (Clásico, Misère, Blitz o Infinito), jugá solo contra la computadora, con un amigo en el mismo dispositivo, o a distancia por internet con código de sala.
 
-🎮 **Jugá acá:** https://adrianivanchen.github.io/tateti-gigante/
+🎮 **Jugá acá:** [TA-TE-TI GIGANTE](https://adrianivanchen.github.io/TATETIGIAGANTE/)
 
 ![Pantalla de inicio](screenshots/01-inicio.png)
 
@@ -118,7 +118,7 @@ Un mismo mail solo puede estar asociado a una cuenta.
 
 ## Jugar con amigos
 
-1. Entrá a https://adrianivanchen.github.io/tateti-gigante/ (o abrí el `.html` / `.exe` si lo tenés descargado).
+1. Entrá a [TA-TE-TI GIGANTE](https://adrianivanchen.github.io/TATETIGIAGANTE/) (o abrí el `.html` / `.exe` si lo tenés descargado).
 2. Elegí "Online" → "Crear sala", y elegí la variante (y el tiempo, si es Blitz).
 3. Copiá el código de 9 caracteres y pasáselo a tu amigo (por chat, por ejemplo).
 4. Tu amigo entra al mismo link, toca "Online" → "Unirse a sala" e ingresa el código.
